@@ -1,22 +1,26 @@
 <div class="container-fluid d-flex align-items-center" style="height: 90vh;">
     <div class="row w-100">
+      <div class="col-6 offset-3 text-center" style="font-size: 1rem; padding-bottom: 1vh;">
+        Statistics:&emsp;Accuracy:&ensp;{{this.accuracy}}&emsp;Speed:&ensp;Placeholder
+      </div>
         <div class="col-6 offset-3 text-center" style="font-size: 2rem;">
             <span *ngFor="let char of testArr; let i = index" 
                   [ngClass]="{'correct': correctStatus[i], 'incorrect': correctStatus[i] === false}">
               {{char}}
+              <span *ngIf="i < testArr.length - 1">&#8901;</span>
             </span>
           </div>
           <div class="col-6 offset-3 text-center" style="padding-top: 2vh;">
-            <input type="text" style="width: 30vw;" placeholder="Start typing to get started" (keydown)="onInput($event)">
+            <input #textInput type="text" style="width: 30vw;" placeholder="Start typing to get started" (keydown)="onInput($event)">
           </div>
-        <div class="col-6 offset-3 text-center" style="padding-top: 2vh;">
+        <!-- <div class="col-6 offset-3 text-center" style="padding-top: 2vh;">
             {{this.totalKeysPressed}}
             {{this.prevChar}}
             {{this.currChar}}
         </div>
         <div class="col-6 offset-3 text-center" style="padding-top: 2vh;">
             {{this.correctKeys}}
-            {{this.accuracy}}
-        </div>
+            {{this.accuracy}}%
+        </div> -->
     </div>
 </div>

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild, } from '@angular/core';
 
 @Component({
   selector: 'app-typing-space',
@@ -42,9 +42,16 @@ export class TypingSpaceComponent {
 
   correct: boolean = false;
 
-  accuracy: number = 0;
+  accuracy: string = "0.00%";
 
   test: string = "test";
+
+  @ViewChild('textInput') textInput!: ElementRef;
+
+  //use AfterViewInit because DOM elements may not be available for manipulation with ngOnInit
+  ngAfterViewInit() {
+    this.textInput.nativeElement.focus();
+  }
 
   getRandomInt():number {
     return this.rand = Math.floor(Math.random() * (this.arrSize));
@@ -56,7 +63,25 @@ export class TypingSpaceComponent {
 
   getNextChar() {
     this.prevChar = this.currChar;
-    this.currChar = this.testArr[this.includedKeysPressed]
+    this.currChar = this.testArr[this.includedKeysPressed];
+    if(this.includedKeysPressed == this.testArr.length) {
+      this.startNewInstance();
+    }
+  }
+
+  startNewInstance() {
+    this.includedKeysPressed = 0;
+    this.excludedKeysPressed = 0;
+    this.totalKeysPressed = 0;
+    this.correctKeys = 0;
+    this.accuracy = "0.00%";
+    this.correctStatus = [];
+    this.testArr = this.shuffleArray(this.testArr);
+    this.currChar = this.testArr[0];
+    //use timeout to ensure character before reset is also cleared from input
+    setTimeout(() => {
+      this.textInput.nativeElement.value = "";
+    }, 0);
   }
 
   onInput(event: any) {
@@ -82,9 +107,9 @@ export class TypingSpaceComponent {
 
   }
 
-  calcAccuracy(): number {
+  calcAccuracy(): string {
     this.totalKeysPressed = this.includedKeysPressed + this.excludedKeysPressed;
-    return this.accuracy = Number.parseFloat((this.correctKeys/this.totalKeysPressed).toFixed(2));
+    return this.accuracy = ((Number.parseFloat((this.correctKeys/this.totalKeysPressed).toFixed(4))) * 100).toFixed(2) + "%";
   }
 
   shuffleArray(arr: string[]): string[] {
