@@ -1,7 +1,24 @@
 <div class="container-fluid d-flex align-items-center" style="height: 90vh;">
     <div class="row w-100">
-      <div class="col-6 offset-3 text-center" style="font-size: 1rem; padding-bottom: 1vh;">
-        Statistics:&emsp;Accuracy:&ensp;{{this.accuracy}}&emsp;Speed:&ensp;Placeholder
+      <div class="col-6 offset-3" style="font-size: 1rem; padding-bottom: 1vh; text-align: center;">
+        <span class="stats-span">
+          Statistics:&emsp;
+        </span>
+        Accuracy:&ensp;
+        <span class="stats-span">
+          {{this.accuracy}}
+        </span>
+        &emsp;Speed:&ensp;
+        <span class="stats-span">
+          {{ speed === 'Infinitycpm' || speed === 'N/A' ? placeholderSpeed : speed }}
+        </span>
+        &emsp;Time:&ensp;
+        <span class="stats-span" *ngIf="elapsedTime < 10000">
+          {{elapsedTime}}
+        </span>
+        <span class="stats-span" *ngIf="elapsedTime > 10000">
+          0000
+        </span>
       </div>
         <div class="col-6 offset-3 text-center" style="font-size: 2rem;">
             <span *ngFor="let char of testArr; let i = index" 
@@ -13,14 +30,5 @@
           <div class="col-6 offset-3 text-center" style="padding-top: 2vh;">
             <input #textInput type="text" style="width: 30vw;" placeholder="Start typing to get started" (keydown)="onInput($event)">
           </div>
-        <!-- <div class="col-6 offset-3 text-center" style="padding-top: 2vh;">
-            {{this.totalKeysPressed}}
-            {{this.prevChar}}
-            {{this.currChar}}
-        </div>
-        <div class="col-6 offset-3 text-center" style="padding-top: 2vh;">
-            {{this.correctKeys}}
-            {{this.accuracy}}%
-        </div> -->
     </div>
 </div>

@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, ViewChild, } from '@angular/core';
+import { setThrowInvalidWriteToSignalError } from '@angular/core/primitives/signals';
 
 @Component({
   selector: 'app-typing-space',
@@ -44,6 +45,16 @@ export class TypingSpaceComponent {
 
   accuracy: string = "0.00%";
 
+  startTime: number = 0;
+
+  currentTime: number = 0;
+
+  elapsedTime: number = 0;
+
+  speed: string = "000.00cpm";
+
+  placeholderSpeed: string = "000.00cpm";
+
   test: string = "test";
 
   @ViewChild('textInput') textInput!: ElementRef;
@@ -51,10 +62,6 @@ export class TypingSpaceComponent {
   //use AfterViewInit because DOM elements may not be available for manipulation with ngOnInit
   ngAfterViewInit() {
     this.textInput.nativeElement.focus();
-  }
-
-  getRandomInt():number {
-    return this.rand = Math.floor(Math.random() * (this.arrSize));
   }
 
   getFirstCharacter() {
@@ -74,10 +81,13 @@ export class TypingSpaceComponent {
     this.excludedKeysPressed = 0;
     this.totalKeysPressed = 0;
     this.correctKeys = 0;
-    this.accuracy = "0.00%";
+    this.accuracy = "00.00%";
     this.correctStatus = [];
     this.testArr = this.shuffleArray(this.testArr);
     this.currChar = this.testArr[0];
+    this.startTime = 0;
+    this.elapsedTime = 0;
+    this.speed = "000.00cpm"
     //use timeout to ensure character before reset is also cleared from input
     setTimeout(() => {
       this.textInput.nativeElement.value = "";
@@ -85,6 +95,10 @@ export class TypingSpaceComponent {
   }
 
   onInput(event: any) {
+    if(!this.startTime) {
+      this.startTime = Date.now();
+      this.updateTimer();
+    }
     const lastTypedChar: string = event.key;
     if(!this.testArr.includes(lastTypedChar) && !(lastTypedChar == "Backspace" || lastTypedChar == " " || lastTypedChar == "Shift")) {
       this.excludedKeysPressed++;
@@ -103,14 +117,31 @@ export class TypingSpaceComponent {
     }
 
     this.calcAccuracy();
+    this.calcSpeed();
     this.getNextChar();
 
   }
-
+  
   calcAccuracy(): string {
     this.totalKeysPressed = this.includedKeysPressed + this.excludedKeysPressed;
     return this.accuracy = ((Number.parseFloat((this.correctKeys/this.totalKeysPressed).toFixed(4))) * 100).toFixed(2) + "%";
   }
+
+  calcSpeed(): string {
+    if (this.elapsedTime === 0) {
+      return "N/A";
+    }
+    return this.speed = ((this.testArr.length/this.elapsedTime) * 60).toFixed(2) + "cpm";
+  }
+
+  updateTimer(): void {
+    this.currentTime = Date.now();
+    this.elapsedTime = Math.floor((this.currentTime - this.startTime) / 1000);
+    setTimeout(() => {
+      this.updateTimer();
+    }, 1000);
+  }
+
 
   shuffleArray(arr: string[]): string[] {
     let currIndex: number = arr.length;

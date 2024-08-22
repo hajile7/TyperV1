@@ -5,3 +5,10 @@
 .incorrect{
     color: red
 }
+
+.stats-span{
+    display: inline-block;
+    text-align: center;
+    width: 13ch;
+    min-width: 13ch;
+}
