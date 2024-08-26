@@ -12,3 +12,17 @@
     width: 25ch;
     min-width: 13ch;
 }
+
+.stats-bar{
+    font-size: 1rem;
+    padding-bottom: 1vh;
+    text-align: center;
+}
+
+.title{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 1vw;
+    padding-right: 1vw;
+}

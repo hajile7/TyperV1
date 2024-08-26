@@ -1,6 +1,11 @@
-<div class="container-fluid d-flex align-items-center" style="height: 90vh;">
+<div class="title">
+  <span style="text-align: center; flex-grow: 1;">TyperV1</span>
+  <span style="cursor: pointer;">Login&nbsp;<span class="bi bi-box-arrow-in-right"></span></span>
+</div>
+<hr style="margin: 0;">
+<div class="container-fluid d-flex align-items-center" style="height: 90vh; padding-bottom: 5vh;">
     <div class="row w-100">
-      <div class="col-6 offset-3" style="font-size: 1rem; padding-bottom: 1vh; text-align: center;">
+      <div class="col-6 offset-3 stats-bar">
         Time:&ensp;
         <span class="stats-span" *ngIf="elapsedTime < 10000">
           {{elapsedTime}}
@@ -9,7 +14,7 @@
           0
         </span>
       </div>
-      <div class="col-6 offset-3" style="font-size: 1rem; padding-bottom: 1vh; text-align: center;">
+      <div class="col-6 offset-3 stats-bar">
         <span class="stats-span">
           Overall Statistics:&emsp;
         </span>
@@ -22,7 +27,7 @@
           {{ totalSpeed === 0 ? placeholderSpeed : totalSpeed.toFixed(2) + "cpm" }}
         </span>
       </div>
-      <div class="col-6 offset-3" style="font-size: 1rem; padding-bottom: 1vh; text-align: center;">
+      <div class="col-6 offset-3 stats-bar">
         <span class="stats-span">
           Session Statistics:&emsp;
         </span>
@@ -42,7 +47,7 @@
               <span *ngIf="i < testArr.length - 1">&#8901;</span>
             </span>
           </div>
-          <div class="col-6 offset-3 text-center" style="padding-top: 2vh;">
+          <div class="col-6 offset-3 text-center" style="padding-top: 3vh;">
             <input #textInput type="text" style="width: 30vw;" placeholder="Start typing to get started" (keydown)="onInput($event)">
           </div>
     </div>
