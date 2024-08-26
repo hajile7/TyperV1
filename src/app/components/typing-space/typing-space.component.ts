@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, ViewChild, } from '@angular/core';
-import { setThrowInvalidWriteToSignalError } from '@angular/core/primitives/signals';
 
 @Component({
   selector: 'app-typing-space',
@@ -25,8 +24,6 @@ export class TypingSpaceComponent {
 
   testArr: string[] = this.shuffleArray(this.preferences);
   
-  rand: number = -1;
-
   currChar: string = this.preferences[0];
 
   prevChar: string = "";
@@ -45,6 +42,10 @@ export class TypingSpaceComponent {
 
   accuracy: string = "0.00%";
 
+  totalAccuracy: number = 0;
+
+  accuracyArr: number[] = [];
+
   startTime: number = 0;
 
   currentTime: number = 0;
@@ -53,9 +54,14 @@ export class TypingSpaceComponent {
 
   speed: string = "000.00cpm";
 
+  totalSpeed: number = 0;
+
+  speedArr: number[] = [];
+
   placeholderSpeed: string = "000.00cpm";
 
-  test: string = "test";
+  test: number = 0;
+
 
   @ViewChild('textInput') textInput!: ElementRef;
 
@@ -72,11 +78,15 @@ export class TypingSpaceComponent {
     this.prevChar = this.currChar;
     this.currChar = this.testArr[this.includedKeysPressed];
     if(this.includedKeysPressed == this.testArr.length) {
+      this.speedArr.push((this.testArr.length/this.elapsedTime) * 60);
+      this.accuracyArr.push(Number.parseFloat((this.correctKeys/this.totalKeysPressed).toFixed(4)) * 100);
       this.startNewInstance();
     }
   }
 
   startNewInstance() {
+    this.calcTotalAccuracy();
+    this.calcTotalSpeed();
     this.includedKeysPressed = 0;
     this.excludedKeysPressed = 0;
     this.totalKeysPressed = 0;
@@ -127,11 +137,27 @@ export class TypingSpaceComponent {
     return this.accuracy = ((Number.parseFloat((this.correctKeys/this.totalKeysPressed).toFixed(4))) * 100).toFixed(2) + "%";
   }
 
+  calcTotalAccuracy(): number {
+    let total: number = 0
+    this.accuracyArr.forEach(num => {
+      total += num;
+    })
+    return this.totalAccuracy = total/this.accuracyArr.length;
+  }
+
   calcSpeed(): string {
     if (this.elapsedTime === 0) {
       return "N/A";
     }
     return this.speed = ((this.testArr.length/this.elapsedTime) * 60).toFixed(2) + "cpm";
+  }
+
+  calcTotalSpeed(): number {
+    let total: number = 0;
+    this.speedArr.forEach(num => {
+      total += num;
+    })
+    return this.totalSpeed = total/this.speedArr.length;
   }
 
   updateTimer(): void {

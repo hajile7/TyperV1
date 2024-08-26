@@ -1,8 +1,30 @@
 <div class="container-fluid d-flex align-items-center" style="height: 90vh;">
     <div class="row w-100">
       <div class="col-6 offset-3" style="font-size: 1rem; padding-bottom: 1vh; text-align: center;">
+        Time:&ensp;
+        <span class="stats-span" *ngIf="elapsedTime < 10000">
+          {{elapsedTime}}
+        </span>
+        <span class="stats-span" *ngIf="elapsedTime > 10000">
+          0
+        </span>
+      </div>
+      <div class="col-6 offset-3" style="font-size: 1rem; padding-bottom: 1vh; text-align: center;">
         <span class="stats-span">
-          Statistics:&emsp;
+          Overall Statistics:&emsp;
+        </span>
+        Accuracy:&ensp;
+        <span class="stats-span">
+          {{this.totalAccuracy.toFixed(2) + "%"}}
+        </span>
+        &emsp;Speed:&ensp;
+        <span class="stats-span">
+          {{ totalSpeed === 0 ? placeholderSpeed : totalSpeed.toFixed(2) + "cpm" }}
+        </span>
+      </div>
+      <div class="col-6 offset-3" style="font-size: 1rem; padding-bottom: 1vh; text-align: center;">
+        <span class="stats-span">
+          Session Statistics:&emsp;
         </span>
         Accuracy:&ensp;
         <span class="stats-span">
@@ -12,15 +34,8 @@
         <span class="stats-span">
           {{ speed === 'Infinitycpm' || speed === 'N/A' ? placeholderSpeed : speed }}
         </span>
-        &emsp;Time:&ensp;
-        <span class="stats-span" *ngIf="elapsedTime < 10000">
-          {{elapsedTime}}
-        </span>
-        <span class="stats-span" *ngIf="elapsedTime > 10000">
-          0000
-        </span>
       </div>
-        <div class="col-6 offset-3 text-center" style="font-size: 2rem;">
+        <div class="col-6 offset-3 text-center" style="font-size: 2rem; padding-top: 2vh;">
             <span *ngFor="let char of testArr; let i = index" 
                   [ngClass]="{'correct': correctStatus[i], 'incorrect': correctStatus[i] === false}">
               {{char}}
