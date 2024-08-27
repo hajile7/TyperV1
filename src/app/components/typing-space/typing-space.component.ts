@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, ViewChild, } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { LoginComponent } from '../login/login.component';
 
 @Component({
   selector: 'app-typing-space',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink, LoginComponent],
   templateUrl: './typing-space.component.html',
   styleUrl: './typing-space.component.css'
 })

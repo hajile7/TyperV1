@@ -1,1 +1,50 @@
-<p>login works!</p>
+<div class="container-fluid min-vh-100 d-flex align-items-center justify-content-center">
+    <div class="row w-100">
+        <!-- Login form (left) -->
+        <div class="col-2 offset-3">
+            <h2>Login</h2>
+            <div class="form-floating mb-3">
+                <input id="loginUsername" type="text" class="form-control" [(ngModel)]="username">
+                <label for="loginUsername">Username</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input id="loginPassword" type="password" class="form-control" [(ngModel)]="password">
+                <label for="loginPassword">Password</label>
+            </div>
+        </div>
+
+        <div class="col-1 d-flex justify-content-center">
+            <div class="vr"></div>
+        </div>
+
+        <!-- Registration form (right) -->
+        <div class="col-2">
+            <h2>Register</h2>
+            <div class="form-floating mb-3">
+                <input id="registerFirstName" type="text" class="form-control" [(ngModel)]="firstName">
+                <label for="registerFirstName">First Name</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input id="registerLastName" type="text" class="form-control" [(ngModel)]="lastName">
+                <label for="registerLastName">Last Name</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input id="registerEmail" type="email" class="form-control" [(ngModel)]="email">
+                <label for="registerEmail">Email</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input id="registerUsername" type="text" class="form-control" [(ngModel)]="registerUsername">
+                <label for="registerUsername">Username</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input id="registerPassword" type="password" class="form-control" [(ngModel)]="registerPassword">
+                <label for="registerPassword">Password</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input id="confirmPassword" type="password" class="form-control" [(ngModel)]="confirmPassword">
+                <label for="confirmPassword">Confirm Password</label>
+            </div>
+        </div>
+    </div>
+</div>
+

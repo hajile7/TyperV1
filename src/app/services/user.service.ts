@@ -21,7 +21,7 @@ export class UserService {
   }
 
   updateUser(updateForm: FormData, userId: number): Observable<UserModel>{
-    return this.http.put<UserModel>(`{this.url}api/User/${userId}`, updateForm);
+    return this.http.put<UserModel>(`${this.url}api/User/${userId}`, updateForm);
   }
 
   deleteUser(userId: number) {
