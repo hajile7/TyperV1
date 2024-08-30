@@ -24,7 +24,43 @@ export class LoginComponent {
   registerPassword: string = "";
   confirmPassword: string = "";
 
+  fileName: string = "";
+  imgUrl: any;
   newUserForm: FormData = new FormData();
+
+  registerUser() {
+    this.newUserForm.append("FistName", this.firstName);
+    this.newUserForm.append("LastName", this.lastName);
+    this.newUserForm.append("UserName", this.username);
+    this.newUserForm.append("Password", this.password);
+
+    this.userService.addUser(this.newUserForm).subscribe((response) => {
+      this.fileName = "";
+      this.firstName = "";
+      this.lastName = "";
+      this.username = "";
+      this.newUserForm = new FormData();
+      this.router.navigate(["/Home"])
+    })
+
+  }
+  
+  onFileSelect(event: any) {
+    const file: File = event.target.files[0];
+
+    if(file) {
+      this.fileName = file.name;
+
+      this.newUserForm.append("Image", file);
+      this.newUserForm.append("filename", file.name);
+
+      const reader: FileReader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (_event) => {
+        this.imgUrl = reader.result;
+      }
+    }
+  }
 
   login() {
     this.userService.login(this.username, this.password).subscribe((response) => {
@@ -35,6 +71,7 @@ export class LoginComponent {
       this.router.navigate(["/Home"]);
     })
   }
+
 
   logout() {
     this.userService.activeUser = {} as UserModel;
