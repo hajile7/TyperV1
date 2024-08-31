@@ -45,7 +45,16 @@
                 <input id="confirmPassword" type="password" class="form-control" [(ngModel)]="confirmPassword">
                 <label for="confirmPassword">Confirm Password</label>
             </div>
-        </div>
+            <div>
+                <label for="profilePic" style="color: white;">Upload a Profile Picture (optional):</label>
+                <br/><br/>
+                <input id="profilePic" style="color: white;" type="file" (change)="onFileSelect($event)">
+                @if(imgUrl != undefined){
+                    <img [src]="imgUrl" style="width: 10rem; height: 10rem; border-radius: 100%;" >
+                }
+            </div>
+            <br/>
+            <button (click)="registerUser()" type="button" class="btn btn-light">Register</button>
     </div>
 </div>
 

@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { UserModel } from '../models/user-model';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private router: Router) { }
 
   url: string = "https://localhost:7192/"
 
@@ -32,6 +33,10 @@ export class UserService {
     return this.http.get<UserModel>(`${this.url}api/User/Login?username=${username}&password=${password}`);
   }
 
-
+  logout() {
+    this.activeUser = {} as UserModel;
+    this.isLoggedIn = false;
+    this.router.navigate(["/Home"]);
+  }
 
 }

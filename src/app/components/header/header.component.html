@@ -1,5 +1,13 @@
 <div class="title">
-    <span style="text-align: center; flex-grow: 1;"><nav><a routerLink="/Home" style="color: white;">TyperV1</a></nav></span>
-    <span style="cursor: pointer;"><nav><a routerLink="/Login" style="color: white;">Login&nbsp;<span class="bi bi-box-arrow-in-right"></span></a></nav></span>
+    @if(!this.userService.isLoggedIn) {
+        <span style="text-align: center; flex-grow: 1;"><nav><a routerLink="/Home" style="color: white;">TyperV1</a></nav></span>
+        <span style="cursor: pointer;"><nav><a routerLink="/Login" style="color: white;">Login&nbsp;<span class="bi bi-box-arrow-in-left"></span></a></nav></span>
+    }
+    @else{
+        <span>{{this.userService.activeUser.userName}}</span>
+        <span style="text-align: center; flex-grow: 1;"><nav><a routerLink="/Home" style="color: white;">TyperV1</a></nav></span>
+        <span style="cursor: pointer" (click)="this.userService.logout()">Logout&nbsp;<span class="bi bi-box-arrow-in-right"></span></span>
+    }
 </div>
 <hr style="margin: 0;">
+

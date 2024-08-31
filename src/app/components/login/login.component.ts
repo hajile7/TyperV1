@@ -29,10 +29,11 @@ export class LoginComponent {
   newUserForm: FormData = new FormData();
 
   registerUser() {
-    this.newUserForm.append("FistName", this.firstName);
+    this.newUserForm.append("FirstName", this.firstName);
     this.newUserForm.append("LastName", this.lastName);
-    this.newUserForm.append("UserName", this.username);
-    this.newUserForm.append("Password", this.password);
+    this.newUserForm.append("UserName", this.registerUsername);
+    this.newUserForm.append("Password", this.registerPassword);
+    this.newUserForm.append("email", this.email);
 
     this.userService.addUser(this.newUserForm).subscribe((response) => {
       this.fileName = "";
