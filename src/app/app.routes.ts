@@ -1,9 +1,9 @@
 import { Routes } from '@angular/router';
-import { TypingSpaceComponent } from './components/typing-space/typing-space.component';
 import { LoginComponent } from './components/login/login.component';
+import { WordTypingSpaceComponent } from './components/word-typing-space/word-typing-space.component';
 
 export const routes: Routes = [
-    {path: "Home", component: TypingSpaceComponent},
+    {path: "Home", component: WordTypingSpaceComponent},
     {path: "Login", component: LoginComponent},
     {path: "**", redirectTo: "Home", pathMatch: "full"}
 ];

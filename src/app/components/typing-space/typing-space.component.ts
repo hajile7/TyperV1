@@ -18,8 +18,6 @@ export class TypingSpaceComponent {
 
   symbols: string[] = [']', '[', '(',')','{','}','|','&','^','~','`','@','#','$','%',',','.','!','?',';',':','\'','\"','\\','/','-','+','*','=','<','>']
 
-  words: string[] = ['cat', 'dog', 'horse', 'cow', 'pig']
-
   correctStatus: boolean[] = [];
 
   preferences: string[] = this.letters;

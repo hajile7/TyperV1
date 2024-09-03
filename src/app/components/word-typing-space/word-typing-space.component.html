@@ -1,0 +1,48 @@
+<div class="container-fluid d-flex align-items-center" style="height: 90vh; padding-bottom: 5vh;">
+    <div class="row w-100">
+        <div class="col-8 offset-2 stats-bar">
+            Time:&ensp;
+            <span class="stats-span" *ngIf="elapsedTime < 10000">
+              {{elapsedTime}}
+            </span>
+            <span class="stats-span" *ngIf="elapsedTime > 10000">
+              0
+            </span>
+          </div>
+          <div class="col-8 offset-2 stats-bar">
+            <span class="stats-span">
+              Overall Statistics:&emsp;
+            </span>
+            Accuracy:&ensp;
+            <span class="stats-span">
+              {{this.totalAccuracy.toFixed(2) + "%"}}
+            </span>
+            &emsp;Speed:&ensp;
+            <span class="stats-span">
+              {{ totalSpeed === 0 ? placeholderSpeed : totalSpeed.toFixed(2) + "cpm" }}
+            </span>
+          </div>
+          <div class="col-8 offset-2 stats-bar">
+            <span class="stats-span">
+              Session Statistics:&emsp;
+            </span>
+            Accuracy:&ensp;
+            <span class="stats-span">
+              {{this.accuracy}}
+            </span>
+            &emsp;Speed:&ensp;
+            <span class="stats-span">
+              {{ speed === 'Infinitycpm' || speed === 'N/A' ? placeholderSpeed : speed }}
+            </span>
+          </div>
+          <div #textInput class="col-8 offset-2 text-center" tabindex="0" (keydown)="onInput($event)" style="font-size: 2rem; padding-top: 2vh;">        
+            <span *ngFor="let char of testArr; let i = index">
+              <span *ngIf="i == currIndex" class="cursor"></span><span class="zero-width"></span>
+              <span style="display: inline-block;" *ngIf="testArr[i] != '1'" [ngClass]="{'correct': correctStatus[i], 'incorrect': correctStatus[i] === false}">
+                {{char}}
+              </span>
+              <span style="margin-left: 1vw; margin-right: 1vw;" *ngIf="testArr[i] == '1' && i < testArr.length - 1" [ngClass]="{'correct': correctStatus[i], 'incorrect': correctStatus[i] == false}">&#8901;</span>
+          </span>
+          </div>
+    </div>
+</div>
