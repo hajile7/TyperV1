@@ -1,3 +1,48 @@
 html {background-color: #3c3838; color: white}
 div {background-color: #3c3838;  color: white; font-family: 'Courier New', Courier, monospace}
 
+.correct{
+    color: green;
+}
+
+.incorrect{
+    color: red
+}
+
+.stats-span{
+    display: inline-block;
+    text-align: center;
+    width: 25ch;
+    min-width: 13ch;
+}
+
+.stats-bar{
+    font-size: 1rem;
+    padding-bottom: 1vh;
+    text-align: center;
+}
+
+.cursor{
+    display: inline-block;
+    width: 1px; 
+    background-color: white;
+    height: 1em;
+    animation: blink .75s step-end infinite;
+    position: relative;
+    vertical-align: middle;
+    margin-left: 1px;
+}
+
+.zero-width {
+    display: inline-block;
+    width: 1px; 
+    height: 1em; 
+    visibility: hidden; /* Keep space without displaying for cursor */
+}
+
+@keyframes blink {
+    50% {
+        opacity: 0;
+    }
+}
+

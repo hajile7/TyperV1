@@ -1,20 +1,3 @@
-.correct{
-    color: green;
-}
-
-.incorrect{
-    color: red
-}
-
-.stats-span{
-    display: inline-block;
-    text-align: center;
-    width: 25ch;
-    min-width: 13ch;
-}
-
-.stats-bar{
-    font-size: 1rem;
-    padding-bottom: 1vh;
-    text-align: center;
+:focus{
+    outline: none;
 }

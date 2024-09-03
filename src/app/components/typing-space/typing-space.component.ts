@@ -64,6 +64,7 @@ export class TypingSpaceComponent {
 
   test: number = 0;
 
+  currIndex: number = 0;
 
   @ViewChild('textInput') textInput!: ElementRef;
 
@@ -100,10 +101,7 @@ export class TypingSpaceComponent {
     this.startTime = 0;
     this.elapsedTime = 0;
     this.speed = "000.00cpm"
-    //use timeout to ensure character before reset is also cleared from input
-    setTimeout(() => {
-      this.textInput.nativeElement.value = "";
-    }, 0);
+    this.currIndex = 0;
   }
 
   onInput(event: any) {
@@ -117,6 +115,9 @@ export class TypingSpaceComponent {
     }
     if(this.testArr.includes(lastTypedChar)) {
       this.includedKeysPressed++;
+      if (this.currIndex < this.testArr.length - 1) {
+        this.currIndex++;
+      }
       if (this.currChar == lastTypedChar) {
         this.correct = true;
         this.correctKeys++;
@@ -127,11 +128,9 @@ export class TypingSpaceComponent {
         this.correctStatus.push(false);
       }
     }
-
     this.calcAccuracy();
     this.calcSpeed();
     this.getNextChar();
-
   }
   
   calcAccuracy(): string {
