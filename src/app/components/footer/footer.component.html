@@ -1,0 +1,5 @@
+<hr style="margin: 0;">
+<div style="text-align: center; padding-top: .3vh;">
+    <span *ngIf="!isCharacterRoute()"><nav><a routerLink="/Home/Characters">Characters</a></nav></span>
+    <span *ngIf="isCharacterRoute()"><nav><a routerLink="/Home/Words">Words</a></nav></span>
+</div>

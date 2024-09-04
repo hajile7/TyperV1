@@ -12,6 +12,18 @@ import { LoginComponent } from '../login/login.component';
 })
 export class HeaderComponent {
 
-  constructor(public userService: UserService){}
+  constructor(private userService: UserService){}
+
+  isLoggedIn() {
+    return this.userService.isLoggedIn;
+  }
+
+  getUsername() {
+    return this.userService.activeUser.userName;
+  }
+
+  logout() {
+    this.userService.logout();
+  }
 
 }

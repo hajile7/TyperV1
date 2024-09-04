@@ -1,12 +1,12 @@
 <div class="title">
-    @if(!this.userService.isLoggedIn) {
-        <span style="text-align: center; flex-grow: 1;"><nav><a routerLink="/Home" style="color: white;">TyperV1</a></nav></span>
-        <span style="cursor: pointer;"><nav><a routerLink="/Login" style="color: white;">Login&nbsp;<span class="bi bi-box-arrow-in-left"></span></a></nav></span>
+    @if(!isLoggedIn()) {
+        <span style="text-align: center; flex-grow: 1;"><nav><a routerLink="/Home">TyperV1</a></nav></span>
+        <span style="cursor: pointer;"><nav><a routerLink="/Login">Login&nbsp;<span class="bi bi-box-arrow-in-left"></span></a></nav></span>
     }
     @else{
-        <span>{{this.userService.activeUser.userName}}</span>
-        <span style="text-align: center; flex-grow: 1;"><nav><a routerLink="/Home" style="color: white;">TyperV1</a></nav></span>
-        <span style="cursor: pointer" (click)="this.userService.logout()">Logout&nbsp;<span class="bi bi-box-arrow-in-right"></span></span>
+        <span>{{getUsername()}}</span>
+        <span style="text-align: center; flex-grow: 1;"><nav><a routerLink="/Home">TyperV1</a></nav></span>
+        <div class="spanHover"><span style="cursor: pointer;" (click)="logout()">Logout&nbsp;<span class="bi bi-box-arrow-in-right"></span></span></div>
     }
 </div>
 <hr style="margin: 0;">

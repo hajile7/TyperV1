@@ -12,23 +12,56 @@ import { LoginComponent } from '../login/login.component';
 })
 export class TypingSpaceComponent {
 
+  //Character Arrays
+
   letters: string[] = ['a', 'b', 'c', 'd','e', 'f', 'g', 'h','i', 'j', 'k', 'l','m', 'n', 'o', 'p', 'q', 'r', 's','t','u','v','w','x','y','z']; 
 
   numbers: string[] = ['0','1', '2', '3', '4', '5','6','7','8','9']
 
   symbols: string[] = [']', '[', '(',')','{','}','|','&','^','~','`','@','#','$','%',',','.','!','?',';',':','\'','\"','\\','/','-','+','*','=','<','>']
 
-  correctStatus: boolean[] = [];
-
-  preferences: string[] = this.letters;
+  preferences: string[] = this.letters.concat(this.letters);
 
   testArr: string[] = this.shuffleArray(this.preferences);
-  
-  currChar: string = this.preferences[0];
 
-  prevChar: string = "";
+  //Time
 
-  arrSize: number = this.preferences.length;
+  startTime: number = 0;
+
+  currentTime: number = 0;
+
+  elapsedTime: number = 0;
+
+  //Accuracy
+
+  accuracy: number = 0;
+
+  prevAccuracy: number = 0
+
+  totalAccuracy: number = 0;
+
+  accuracyArr: number[] = [];
+
+  //Speed
+
+  placeholderSpeed: string = "000.00 cpm";
+
+  speed: number = 0;
+
+  prevSpeed: number = 0;
+
+  totalSpeed: number = 0;
+
+  speedArr: number[] = [];
+
+
+  //Correct Status
+
+  correctStatus: boolean[] = [];
+
+  correct: boolean = false;
+
+  //Key Counters
 
   includedKeysPressed: number = 0;
 
@@ -38,31 +71,17 @@ export class TypingSpaceComponent {
 
   correctKeys: number = 0;
 
-  correct: boolean = false;
-
-  accuracy: string = "0.00%";
-
-  totalAccuracy: number = 0;
-
-  accuracyArr: number[] = [];
-
-  startTime: number = 0;
-
-  currentTime: number = 0;
-
-  elapsedTime: number = 0;
-
-  speed: string = "000.00cpm";
-
-  totalSpeed: number = 0;
-
-  speedArr: number[] = [];
-
-  placeholderSpeed: string = "000.00cpm";
-
-  test: number = 0;
-
+  //Others
+  
   currIndex: number = 0;
+
+  currChar: string = this.preferences[0];
+
+  prevChar: string = "";
+
+  arrSize: number = this.preferences.length;
+
+  roundCount: number = 0;
 
   @ViewChild('textInput') textInput!: ElementRef;
 
@@ -79,8 +98,11 @@ export class TypingSpaceComponent {
     this.prevChar = this.currChar;
     this.currChar = this.testArr[this.includedKeysPressed];
     if(this.includedKeysPressed == this.testArr.length) {
-      this.speedArr.push((this.testArr.length/this.elapsedTime) * 60);
-      this.accuracyArr.push(Number.parseFloat((this.correctKeys/this.totalKeysPressed).toFixed(4)) * 100);
+      this.speedArr.push(this.speed);
+      this.accuracyArr.push(this.accuracy);
+      this.prevAccuracy = this.accuracy;
+      this.prevSpeed = this.speed;
+      this.roundCount++;
       this.startNewInstance();
     }
   }
@@ -92,13 +114,13 @@ export class TypingSpaceComponent {
     this.excludedKeysPressed = 0;
     this.totalKeysPressed = 0;
     this.correctKeys = 0;
-    this.accuracy = "00.00%";
+    this.accuracy = 0;
     this.correctStatus = [];
     this.testArr = this.shuffleArray(this.testArr);
     this.currChar = this.testArr[0];
     this.startTime = 0;
     this.elapsedTime = 0;
-    this.speed = "000.00cpm"
+    this.speed = 0;
     this.currIndex = 0;
   }
 
@@ -131,32 +153,29 @@ export class TypingSpaceComponent {
     this.getNextChar();
   }
   
-  calcAccuracy(): string {
+  calcAccuracy() {
     this.totalKeysPressed = this.includedKeysPressed + this.excludedKeysPressed;
-    return this.accuracy = ((Number.parseFloat((this.correctKeys/this.totalKeysPressed).toFixed(4))) * 100).toFixed(2) + "%";
+    this.accuracy = this.correctKeys/this.totalKeysPressed;
   }
 
-  calcTotalAccuracy(): number {
+  calcTotalAccuracy() {
     let total: number = 0
     this.accuracyArr.forEach(num => {
       total += num;
     })
-    return this.totalAccuracy = total/this.accuracyArr.length;
+    this.totalAccuracy = total/this.accuracyArr.length;
   }
 
-  calcSpeed(): string {
-    if (this.elapsedTime === 0) {
-      return "N/A";
-    }
-    return this.speed = ((this.testArr.length/this.elapsedTime) * 60).toFixed(2) + "cpm";
+  calcSpeed() {
+    this.speed = (this.testArr.length/this.elapsedTime) * 60;
   }
 
-  calcTotalSpeed(): number {
+  calcTotalSpeed() {
     let total: number = 0;
     this.speedArr.forEach(num => {
       total += num;
     })
-    return this.totalSpeed = total/this.speedArr.length;
+    this.totalSpeed = total/this.speedArr.length;
   }
 
   updateTimer(): void {
@@ -166,7 +185,6 @@ export class TypingSpaceComponent {
       this.updateTimer();
     }, 1000);
   }
-
 
   shuffleArray(arr: string[]): string[] {
     let currIndex: number = arr.length;

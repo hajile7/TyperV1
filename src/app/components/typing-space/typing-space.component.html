@@ -1,6 +1,6 @@
-<div class="container-fluid d-flex align-items-center" style="height: 90vh; padding-bottom: 5vh;">
+<div class="container-fluid d-flex align-items-center" style="height: 94vh; padding-bottom: 18vh;">
     <div class="row w-100">
-      <div class="col-6 offset-3 stats-bar">
+      <div class="col-8 offset-2 stats-bar">
         Time:&ensp;
         <span class="stats-span" *ngIf="elapsedTime < 10000">
           {{elapsedTime}}
@@ -9,33 +9,46 @@
           0
         </span>
       </div>
-      <div class="col-6 offset-3 stats-bar">
-        <span class="stats-span">
-          Overall Statistics:&emsp;
+      <div class="col-8 offset-2 stats-bar" style="margin-top: 1.5vh;">
+        <span class="stats-span" style="text-align: left;">
+          Overall<span>({{roundCount}})</span><span *ngIf="roundCount < 10">&nbsp;</span><i class="bi bi-arrow-right"></i>
         </span>
         Accuracy:&ensp;
         <span class="stats-span">
-          {{this.totalAccuracy.toFixed(2) + "%"}}
+          {{(this.totalAccuracy * 100).toFixed(2) + "%"}}
         </span>
         &emsp;Speed:&ensp;
-        <span class="stats-span">
-          {{ totalSpeed === 0 ? placeholderSpeed : totalSpeed.toFixed(2) + "cpm" }}
+        <span class="stats-span" style="text-align: right;">
+          {{ totalSpeed == 0 ? placeholderSpeed : totalSpeed.toFixed(2) + " cpm" }}
         </span>
       </div>
-      <div class="col-6 offset-3 stats-bar">
-        <span class="stats-span">
-          Session Statistics:&emsp;
+      <div class="col-8 offset-2 stats-bar">
+        <span class="stats-span" style="text-align: left;">
+          Previous &nbsp;&nbsp;<i class="bi bi-arrow-right"></i>
         </span>
         Accuracy:&ensp;
         <span class="stats-span">
-          {{this.accuracy}}
+          {{(this.prevAccuracy * 100).toFixed(2) + "%"}}
         </span>
         &emsp;Speed:&ensp;
-        <span class="stats-span">
-          {{ speed === 'Infinitycpm' || speed === 'N/A' ? placeholderSpeed : speed }}
+        <span class="stats-span" style="text-align: right;">
+          {{ prevSpeed == 0 ? placeholderSpeed : prevSpeed.toFixed(2) + " cpm" }}
         </span>
       </div>
-      <div #textInput class="col-6 offset-3 text-center" tabindex="0" (keydown)="onInput($event)" style="font-size: 2rem; padding-top: 2vh;">        
+      <div class="col-8 offset-2 stats-bar">
+        <span class="stats-span" style="text-align: left;">
+          Current &nbsp;&nbsp;&nbsp;<i class="bi bi-arrow-right"></i>
+        </span>
+        Accuracy:&ensp;
+        <span class="stats-span">
+          {{(this.accuracy * 100).toFixed(2) + "%"}}
+        </span>
+        &emsp;Speed:&ensp;
+        <span class="stats-span" style="text-align: right;">
+          {{ speed > 1000 || speed == null || speed == 0 ? placeholderSpeed : speed.toFixed(2) + " cpm"}}
+        </span>
+      </div>
+      <div #textInput class="col-8 offset-2 text-center" tabindex="0" (keydown)="onInput($event)" style="font-size: 2rem; margin-top: 5vh; padding-bottom: 5vh;">        
         <span *ngFor="let char of testArr; let i = index">
           <span *ngIf="i == currIndex" class="cursor"></span><span class="zero-width"></span>
           <span [ngClass]="{'correct': correctStatus[i], 'incorrect': correctStatus[i] === false}">

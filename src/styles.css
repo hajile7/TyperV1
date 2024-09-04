@@ -12,8 +12,8 @@ div {background-color: #3c3838;  color: white; font-family: 'Courier New', Couri
 .stats-span{
     display: inline-block;
     text-align: center;
-    width: 25ch;
-    min-width: 13ch;
+    width: 20ch;
+    min-width: 10ch;
 }
 
 .stats-bar{
@@ -45,4 +45,5 @@ div {background-color: #3c3838;  color: white; font-family: 'Courier New', Couri
         opacity: 0;
     }
 }
+
 

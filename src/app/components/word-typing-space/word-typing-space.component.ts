@@ -14,7 +14,7 @@ export class WordTypingSpaceComponent {
 
   letters: string[] = ['a', 'b', 'c', 'd','e', 'f', 'g', 'h','i', 'j', 'k', 'l','m', 'n', 'o', 'p', 'q', 'r', 's','t','u','v','w','x','y','z']; 
 
-  words: string[] = ["cow", "cat", "dog", "snake", "horse", "bird", "pig", "rat"];
+  words: string[] = ["cow", "cat", "dog", "snake", "horse", "bird", "pig", "rat", "cow", "cat", "dog", "snake", "horse", "bird", "pig", "rat", "horse", "bird", "pig", "rat"];
 
   testArr: string[] = this.convertToCharArr(this.shuffleArray(this.words));
 
@@ -28,23 +28,25 @@ export class WordTypingSpaceComponent {
 
   //Accuracy
 
-  accuracyNum: number = 0;
-
-  accuracy: string = "0.00%";
+  accuracy: number = 0;
 
   totalAccuracy: number = 0;
 
   accuracyArr: number[] = [];
 
+  prevAccuracy: number = 0;
+
   //Speed
 
-  speed: string = "000.00cpm";
+  placeholderSpeed: string = "000.00 wpm";
+
+  speed: number = 0;
 
   totalSpeed: number = 0;
 
   speedArr: number[] = [];
 
-  placeholderSpeed: string = "000.00cpm";
+  prevSpeed: number = 0;
 
   //Correct Status
 
@@ -71,6 +73,8 @@ export class WordTypingSpaceComponent {
   currChar: string = this.testArr[0];
 
   prevChar: string = "";
+
+  roundCount: number = 0;
 
   @ViewChild('textInput') textInput?: ElementRef;
 
@@ -118,11 +122,8 @@ export class WordTypingSpaceComponent {
     }
 
     this.calcAccuracy();
-    // this.calcSpeed();
+    this.calcSpeed();
     this.getNextChar();
-
-    console.log(this.accuracyArr);
-    console.log(this.accuracy);
 
   }
 
@@ -130,15 +131,18 @@ export class WordTypingSpaceComponent {
     this.prevChar = this.currChar;
     this.currChar = this.testArr[this.includedKeysPressed];
     if(this.includedKeysPressed == this.testArr.length - 1) {
-      this.accuracyArr.push(this.accuracyNum);
+      this.accuracyArr.push(this.accuracy);
+      this.speedArr.push(this.speed);
+      this.prevAccuracy = this.accuracy;
+      this.prevSpeed = this.speed;
+      this.roundCount++;
       this.startNewInstance();
     }
   }
 
   calcAccuracy() {
     this.totalKeysPressed = (this.includedKeysPressed + this.excludedKeysPressed) - this.spaces;
-    this.accuracyNum = this.correctKeys/this.totalKeysPressed;
-    this.accuracy = ((Number.parseFloat((this.correctKeys/this.totalKeysPressed).toFixed(4))) * 100).toFixed(2) + "%";
+    this.accuracy = this.correctKeys/this.totalKeysPressed;
   }
 
   calcTotalAccuracy() {
@@ -149,21 +153,35 @@ export class WordTypingSpaceComponent {
     this.totalAccuracy = total/this.accuracyArr.length;
   }
 
+  calcSpeed() {
+    let avgWord: number = (this.testArr.length - this.testArr.filter(x => x == "1").length)/4.7;
+    this.speed = (avgWord/this.elapsedTime) * 60;
+  }
+
+  calcTotalSpeed() {
+    let total: number = 0;
+    this.speedArr.forEach(num => {
+      total += num;
+    })
+    this.totalSpeed = total/this.speedArr.length;
+  }
+
+
   startNewInstance() {
     this.calcTotalAccuracy();
-    // this.calcTotalSpeed();
+    this.calcTotalSpeed();
     this.includedKeysPressed = 0;
     this.excludedKeysPressed = 0;
     this.totalKeysPressed = 0;
     this.correctKeys = 0;
     this.spaces = 0;
-    this.accuracy = "00.00%";
     this.correctStatus = [];
+    this.accuracy = 0;
     this.testArr = this.convertToCharArr(this.shuffleArray(this.words));
     this.currChar = this.testArr[0];
     this.startTime = 0;
     this.elapsedTime = 0;
-    this.speed = "000.00cpm"
+    this.speed = 0;
     this.currIndex = 0;
   }
 
