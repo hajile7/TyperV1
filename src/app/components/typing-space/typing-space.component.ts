@@ -83,6 +83,8 @@ export class TypingSpaceComponent {
 
   roundCount: number = 0;
 
+  isFocused: boolean = true;
+
   @ViewChild('textInput') textInput!: ElementRef;
 
   //use AfterViewInit because DOM elements may not be available for manipulation with ngOnInit

@@ -76,6 +76,8 @@ export class WordTypingSpaceComponent {
 
   roundCount: number = 0;
 
+  isFocused: boolean = true;
+
   @ViewChild('textInput') textInput?: ElementRef;
 
   //Functions

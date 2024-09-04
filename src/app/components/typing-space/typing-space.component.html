@@ -1,7 +1,13 @@
 <div class="container-fluid d-flex align-items-center" style="height: 94vh; padding-bottom: 18vh;">
     <div class="row w-100">
       <div class="col-8 offset-2 stats-bar">
-        Time:&ensp;
+        <button class="btn-plain-text"
+             type="button"
+             data-bs-toggle="collapse"
+             data-bs-target="#scoreSpan" 
+             aria-expanded="true"
+             aria-controls="scoreSpan"
+             >Time:&ensp;</button>
         <span class="stats-span" *ngIf="elapsedTime < 10000">
           {{elapsedTime}}
         </span>
@@ -9,6 +15,7 @@
           0
         </span>
       </div>
+      <div class="collapse show" id="scoreSpan">
       <div class="col-8 offset-2 stats-bar" style="margin-top: 1.5vh;">
         <span class="stats-span" style="text-align: left;">
           Overall<span>({{roundCount}})</span><span *ngIf="roundCount < 10">&nbsp;</span><i class="bi bi-arrow-right"></i>
@@ -48,13 +55,26 @@
           {{ speed > 1000 || speed == null || speed == 0 ? placeholderSpeed : speed.toFixed(2) + " cpm"}}
         </span>
       </div>
-      <div #textInput class="col-8 offset-2 text-center" tabindex="0" (keydown)="onInput($event)" style="font-size: 2rem; margin-top: 5vh; padding-bottom: 5vh;">        
-        <span *ngFor="let char of testArr; let i = index">
-          <span *ngIf="i == currIndex" class="cursor"></span><span class="zero-width"></span>
+    </div>
+    <div class="textWrapper">
+    <div class="col-8 offset-2 text-center" style="font-size: 2rem; margin-top: 5vh; padding-bottom: 5vh;">
+      <div #textInput tabindex="0" 
+      (keydown)="onInput($event)"
+      (focus)="isFocused = true" 
+      (blur)="isFocused = false"
+      [ngClass]="{'blurred': !isFocused}"
+      >          
+      <span *ngFor="let char of testArr; let i = index">
+          <span *ngIf="i == currIndex && isFocused" class="cursor"></span><span class="zero-width"></span>
           <span [ngClass]="{'correct': correctStatus[i], 'incorrect': correctStatus[i] === false}">
             {{char}}
           </span>
       </span>
       </div>
+      <div *ngIf="!isFocused" class="focusText">
+        Click Here to Focus
+      </div>
+    </div>
+  </div>
     </div>
 </div>
