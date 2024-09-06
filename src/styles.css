@@ -12,13 +12,12 @@ div {background-color: #3c3838;  color: white; font-family: 'Courier New', Couri
 .stats-span{
     display: inline-block;
     text-align: center;
-    width: 20ch;
-    min-width: 10ch;
+    width: 17ch;  
+    min-width: 10ch;  
 }
 
 .stats-bar{
     font-size: 1rem;
-    padding-bottom: 1vh;
     text-align: center;
 }
 
@@ -65,19 +64,6 @@ div {background-color: #3c3838;  color: white; font-family: 'Courier New', Couri
     position: relative;
     vertical-align: middle;
     margin-left: 1px;
-}
-
-.zero-width {
-    display: inline-block;
-    width: 1px; 
-    height: 1em; 
-    visibility: hidden; /** cursor placeholder **/
-}
-
-@keyframes blink {
-    50% {
-        opacity: 0;
-    }
 }
 
 

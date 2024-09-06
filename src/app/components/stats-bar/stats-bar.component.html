@@ -1,0 +1,14 @@
+<div class="col-8 offset-2 stats-bar" style="margin-top: 1.5vh;">
+    <span class="stats-span" style="text-align: left;">
+      {{ title }}<span *ngIf="title == 'Overall'">({{roundCount}})</span>
+      <span class="icon"><i class="bi bi-arrow-right"></i></span>
+    </span>
+    <span>Accuracy:&ensp;</span>
+    <span class="stats-span" style="text-align: center;">
+      {{ (accuracy * 100).toFixed(2) + "%" }}
+    </span>
+    <span>Speed:&ensp;</span>
+    <span class="stats-span" style="text-align: right;">
+      {{ speed === 0 || speed > 350 ? placeholderSpeed : speed.toFixed(2) + " wpm" }}
+    </span>
+  </div>

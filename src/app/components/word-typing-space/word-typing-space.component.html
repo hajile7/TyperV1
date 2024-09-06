@@ -1,96 +1,73 @@
 <div class="container-fluid d-flex align-items-center" style="height: 94vh; padding-bottom: 18vh;">
-    <div class="row w-100">
-        <div class="col-8 offset-2 stats-bar">
-            <button class="btn-plain-text"
-             type="button"
-             data-bs-toggle="collapse"
-             data-bs-target="#scoreSpan" 
-             aria-expanded="true"
-             aria-controls="scoreSpan"
-             >Time:&ensp;</button>
-            <span class="stats-span" *ngIf="elapsedTime < 10000">
-              {{elapsedTime}}
-            </span>
-            <span class="stats-span" *ngIf="elapsedTime > 10000">
-              0
-            </span>
-          </div>
-          <div class="collapse show" id="scoreSpan">
-          <div class="col-8 offset-2 stats-bar" style="margin-top: 1.5vh;">
-            <span class="stats-span" style="text-align: left;">
-              Overall<span>({{roundCount}})</span><span *ngIf="roundCount < 10">&nbsp;</span><i class="bi bi-arrow-right"></i>
-            </span>
-            Accuracy:&ensp;
-            <span class="stats-span">
-              {{(this.totalAccuracy * 100).toFixed(2) + "%"}}
-            </span>
-            &emsp;Speed:&ensp;
-            <span class="stats-span" style="text-align: right;">
-              {{ totalSpeed == 0 ? placeholderSpeed : totalSpeed.toFixed(2) + " wpm" }}
-            </span>
-          </div>
-          <div class="col-8 offset-2 stats-bar">
-            <span class="stats-span" style="text-align: left;">
-              Previous &nbsp;&nbsp;<i class="bi bi-arrow-right"></i>
-            </span>
-            Accuracy:&ensp;
-            <span class="stats-span">
-              {{(this.prevAccuracy * 100).toFixed(2) + "%"}}
-            </span>
-            &emsp;Speed:&ensp;
-            <span class="stats-span" style="text-align: right;">
-              {{ prevSpeed == 0 ? placeholderSpeed : prevSpeed.toFixed(2) + " wpm" }}
-            </span>
-          </div>
-          <div class="col-8 offset-2 stats-bar">
-            <span class="stats-span" style="text-align: left;">
-              Current &nbsp;&nbsp;&nbsp;<i class="bi bi-arrow-right"></i>
-            </span>
-            Accuracy:&ensp;
-            <span class="stats-span">
-              {{(this.accuracy * 100).toFixed(2) + "%"}}
-            </span>
-            &emsp;Speed:&ensp;
-            <span class="stats-span" style="text-align: right;">
-              {{ speed > 1000 || speed == null || speed == 0 ? placeholderSpeed : speed.toFixed(2) + " wpm" }}
-            </span>
-          </div>
+  <div class="row w-100">
+      <div class="col-8 offset-2 stats-bar">
+          <button class="btn-plain-text"
+           type="button"
+           data-bs-toggle="collapse"
+           data-bs-target="#scoreSpan" 
+           aria-expanded="true"
+           aria-controls="scoreSpan"
+           >Time:&ensp;</button>
+          <span class="stats-span" *ngIf="elapsedTime < 10000">
+            {{elapsedTime}}
+          </span>
+          <span class="stats-span" *ngIf="elapsedTime > 10000">
+            0
+          </span>
         </div>
-        <div class="textWrapper">
-        <div class="col-8 offset-2 text-center" style="font-size: 2rem; margin-top: 5vh; padding-bottom: 5vh;">
-          <div #textInput tabindex="0"
-          (keyup)="onInput($event)"
-          (focus)="onFocus()" 
-          (blur)="onBlur()"
-          [ngClass]="{'blurred': !isFocused}"
-          >
-          <ng-container *ngFor="let word of words; let wordIndex = index;">
-            <span class="word">
-              <ng-container *ngFor="let char of word.chars; let charIndex = index;">
-                <span *ngIf="(charIndex + word.startIndex == currIndex) && isFocused"
-                class="cursor"
-                ></span>
-                <span style="display: inline-block;"
-                [ngClass]="{'correct': correctStatus[charIndex + word.startIndex], 
-                'incorrect': correctStatus[charIndex + word.startIndex] === false}"
-                >
-                {{char}}
-                </span> 
-              </ng-container>
-            </span>
-            <span *ngIf="wordIndex < words.length - 1"
-            [ngClass]="{'correct': correctStatus[word.startIndex + word.chars.length], 
-            'incorrect': correctStatus[word.startIndex + word.chars.length] === false}">
-            <span *ngIf="word.startIndex + word.chars.length === currIndex && isFocused"
-            class="cursor"></span>
-              &#8901;
-            </span>
-          </ng-container>
-        </div>
-        <div *ngIf="!isFocused" class="focusText">
-          Click Here or Push Any Key to Focus
-        </div>
+        <div class="collapse show" id="scoreSpan">
+          <app-stats-bar
+          [title]="'Overall'"
+          [accuracy]="totalAccuracy"
+          [speed]="totalSpeed"
+          [roundCount]="roundCount">
+        </app-stats-bar>
+        <app-stats-bar
+          [title]="'Previous'"
+          [accuracy]="prevAccuracy"
+          [speed]="prevSpeed">
+        </app-stats-bar>
+        <app-stats-bar
+        [title]="'Current'"
+        [accuracy]="accuracy"
+        [speed]="speed">
+      </app-stats-bar>
+      </div>
+      <div class="textWrapper">
+      <div class="col-8 offset-2 text-center" style="font-size: 2rem; margin-top: 5vh; padding-bottom: 5vh;">
+        <div #textInput tabindex="0"
+        (keyup)="onInput($event)"
+        (focus)="onFocus()" 
+        (blur)="onBlur()"
+        [ngClass]="{'blurred': !isFocused}"
+        >
+        <ng-container *ngFor="let word of words; let wordIndex = index;">
+          <span class="word">
+            <ng-container *ngFor="let char of word.chars; let charIndex = index;">
+              <span *ngIf="(charIndex + word.startIndex == currIndex) && isFocused"
+              class="cursor"
+              ></span>
+              <span style="display: inline-block;"
+              [ngClass]="{'correct': correctStatus[charIndex + word.startIndex], 
+              'incorrect': correctStatus[charIndex + word.startIndex] === false}"
+              >
+              {{char}}
+              </span> 
+            </ng-container>
+          </span>
+          <span *ngIf="wordIndex < words.length - 1"
+          [ngClass]="{'correct': correctStatus[word.startIndex + word.chars.length], 
+          'incorrect': correctStatus[word.startIndex + word.chars.length] === false}">
+          <span *ngIf="word.startIndex + word.chars.length === currIndex && isFocused"
+          class="cursor"></span>
+            &#8901;
+          </span>
+        </ng-container>
+      </div>
+      <div *ngIf="!isFocused" class="focusText">
+        Click Here or Push Any Key to Focus
       </div>
     </div>
-    </div>
+  </div>
+  </div>
 </div>
