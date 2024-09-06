@@ -58,22 +58,37 @@
         </div>
         <div class="textWrapper">
         <div class="col-8 offset-2 text-center" style="font-size: 2rem; margin-top: 5vh; padding-bottom: 5vh;">
-          <div #textInput tabindex="0"  
-          (keydown)="onInput($event)"
-          (focus)="isFocused = true" 
-          (blur)="isFocused = false"
+          <div #textInput tabindex="0"
+          (keyup)="onInput($event)"
+          (focus)="onFocus()" 
+          (blur)="onBlur()"
           [ngClass]="{'blurred': !isFocused}"
-          >  
-            <span *ngFor="let char of testArr; let i = index">
-              <span *ngIf="i == currIndex && isFocused" class="cursor"></span><span class="zero-width"></span>
-              <span style="display: inline-block;" *ngIf="testArr[i] != '1'" [ngClass]="{'correct': correctStatus[i], 'incorrect': correctStatus[i] === false}">
+          >
+          <ng-container *ngFor="let word of words; let wordIndex = index;">
+            <span class="word">
+              <ng-container *ngFor="let char of word.chars; let charIndex = index;">
+                <span *ngIf="(charIndex + word.startIndex == currIndex) && isFocused"
+                class="cursor"
+                ></span>
+                <span style="display: inline-block;"
+                [ngClass]="{'correct': correctStatus[charIndex + word.startIndex], 
+                'incorrect': correctStatus[charIndex + word.startIndex] === false}"
+                >
                 {{char}}
-              </span>
-              <span style="margin-left: 1vw; margin-right: 1vw;" *ngIf="testArr[i] == '1' && i < testArr.length - 1" [ngClass]="{'correct': correctStatus[i], 'incorrect': correctStatus[i] == false}">&#8901;</span>
-          </span>
+                </span> 
+              </ng-container>
+            </span>
+            <span *ngIf="wordIndex < words.length - 1"
+            [ngClass]="{'correct': correctStatus[word.startIndex + word.chars.length], 
+            'incorrect': correctStatus[word.startIndex + word.chars.length] === false}">
+            <span *ngIf="word.startIndex + word.chars.length === currIndex && isFocused"
+            class="cursor"></span>
+              &#8901;
+            </span>
+          </ng-container>
         </div>
         <div *ngIf="!isFocused" class="focusText">
-          Click Here to Focus
+          Click Here or Push Any Key to Focus
         </div>
       </div>
     </div>

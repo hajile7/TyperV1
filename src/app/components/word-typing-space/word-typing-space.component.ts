@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-word-typing-space',
@@ -10,13 +10,17 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 })
 export class WordTypingSpaceComponent {
 
+  constructor(private renderer: Renderer2){}
+
   //Word arrays
 
   letters: string[] = ['a', 'b', 'c', 'd','e', 'f', 'g', 'h','i', 'j', 'k', 'l','m', 'n', 'o', 'p', 'q', 'r', 's','t','u','v','w','x','y','z']; 
 
-  words: string[] = ["cow", "cat", "dog", "snake", "horse", "bird", "pig", "rat", "cow", "cat", "dog", "snake", "horse", "bird", "pig", "rat", "horse", "bird", "pig", "rat"];
+  tempWords: string[] = ["cow", "cat", "dog", "snake", "horse", "bird", "pig", "rat", "cow", "cat", "dog", "snake", "horse", "bird", "pig", "rat", "horse", "bird", "pig", "rat"];
 
-  testArr: string[] = this.convertToCharArr(this.shuffleArray(this.words));
+  testArr: string[] = this.convertToCharArr(this.shuffleArray(this.tempWords));
+
+  words: { chars: string[]; startIndex: number }[] = [];
 
   //Time
 
@@ -78,15 +82,50 @@ export class WordTypingSpaceComponent {
 
   isFocused: boolean = true;
 
+  private keyListener: (() => void) | null = null;
+
   @ViewChild('textInput') textInput?: ElementRef;
 
   //Functions
 
-  ngAfterViewInit() {
+  ngOnInit() {
+    this.convertCharstoWords();
+  }
+
+  ngAfterViewInit(): void {
     this.textInput?.nativeElement.focus();
   }
 
-  onInput(event: any) {
+  ngOnDestroy(): void {
+    this.removeGlobalKeyListener();
+  }
+
+  onBlur(): void {
+    this.isFocused = false;
+    this.addGlobalKeyListener();
+  }
+
+  onFocus(): void {
+    this.isFocused = true;
+    this.removeGlobalKeyListener();
+  }
+
+  addGlobalKeyListener(): void {
+    if(!this.keyListener) {
+      this.keyListener = this.renderer.listen('window', 'keyup', (event: KeyboardEvent) => {
+        this.textInput?.nativeElement.focus();
+      });
+    }
+  }
+
+  removeGlobalKeyListener() {
+    if (this.keyListener) {
+      this.keyListener(); //unsubscribe the listener via .listen
+    }
+      this.keyListener = null;
+  }
+
+  onInput(event: any): void {
 
     if(!this.startTime) {
       this.startTime = Date.now();
@@ -129,7 +168,7 @@ export class WordTypingSpaceComponent {
 
   }
 
-  getNextChar() {
+  getNextChar(): void {
     this.prevChar = this.currChar;
     this.currChar = this.testArr[this.includedKeysPressed];
     if(this.includedKeysPressed == this.testArr.length - 1) {
@@ -142,12 +181,12 @@ export class WordTypingSpaceComponent {
     }
   }
 
-  calcAccuracy() {
+  calcAccuracy(): void {
     this.totalKeysPressed = (this.includedKeysPressed + this.excludedKeysPressed) - this.spaces;
     this.accuracy = this.correctKeys/this.totalKeysPressed;
   }
 
-  calcTotalAccuracy() {
+  calcTotalAccuracy(): void {
     let total: number = 0;
     this.accuracyArr.forEach(num => {
       total += num;
@@ -155,12 +194,12 @@ export class WordTypingSpaceComponent {
     this.totalAccuracy = total/this.accuracyArr.length;
   }
 
-  calcSpeed() {
+  calcSpeed(): void {
     let avgWord: number = (this.testArr.length - this.testArr.filter(x => x == "1").length)/4.7;
     this.speed = (avgWord/this.elapsedTime) * 60;
   }
 
-  calcTotalSpeed() {
+  calcTotalSpeed(): void {
     let total: number = 0;
     this.speedArr.forEach(num => {
       total += num;
@@ -168,10 +207,10 @@ export class WordTypingSpaceComponent {
     this.totalSpeed = total/this.speedArr.length;
   }
 
-
-  startNewInstance() {
+  startNewInstance(): void {
     this.calcTotalAccuracy();
     this.calcTotalSpeed();
+    this.words = [];
     this.includedKeysPressed = 0;
     this.excludedKeysPressed = 0;
     this.totalKeysPressed = 0;
@@ -179,7 +218,8 @@ export class WordTypingSpaceComponent {
     this.spaces = 0;
     this.correctStatus = [];
     this.accuracy = 0;
-    this.testArr = this.convertToCharArr(this.shuffleArray(this.words));
+    this.testArr = this.convertToCharArr(this.shuffleArray(this.tempWords));
+    this.convertCharstoWords();
     this.currChar = this.testArr[0];
     this.startTime = 0;
     this.elapsedTime = 0;
@@ -195,9 +235,37 @@ export class WordTypingSpaceComponent {
     }, 1000);
   }
 
-  convertToCharArr(words: string[]): string[] {
+  convertCharstoWords(): void {
+    let currentWordChars: string[] = [];
+    let startIndex = 0;
+
+    for (let i = 0; i < this.testArr.length; i++) {
+      const char = this.testArr[i];
+
+      if (char === '1') {
+        // When '1' is encountered, it denotes a space between words
+        if (currentWordChars.length > 0) {
+          this.words.push({ chars: currentWordChars, startIndex });
+          currentWordChars = [];
+        }
+        startIndex = i + 1; // Update startIndex for the next word
+      } else {
+        if (currentWordChars.length === 0) {
+          startIndex = i; // Set startIndex at the beginning of a new word
+        }
+        currentWordChars.push(char);
+      }
+    }
+
+    // Add the last word if there is one
+    if (currentWordChars.length > 0) {
+      this.words.push({ chars: currentWordChars, startIndex });
+    }
+  }
+
+  convertToCharArr(tempWords: string[]): string[] {
     let result: string[] = [];
-    words.forEach(word => {
+    tempWords.forEach(word => {
       result = result.concat(word.split(''));
       result.push("1")
     });

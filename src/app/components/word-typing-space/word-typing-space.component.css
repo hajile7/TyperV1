@@ -1,3 +1,7 @@
 :focus{
     outline: none;
 }
+
+.word{
+    display: inline-block; 
+  }
