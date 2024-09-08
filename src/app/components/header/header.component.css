@@ -1,13 +1,14 @@
-.title{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-left: 1vw;
-    padding-right: 1vw;
+.dropItem {
+    :hover{
+        background-color: aqua;
+    }
 }
 
-a{
-    text-decoration: none;
+a.nav-link {
+    color: white;
+}
+
+a.navbar-brand {
     color: white;
 }
 
@@ -15,6 +16,10 @@ a:hover {
     color: aqua;
 }
 
-.spanHover span:hover{
-    color: aqua
+div.nav-link.dropdown-toggle {
+    color: white;
+}
+
+div.nav-link.dropdown-toggle:hover {
+    color: aqua;
 }
