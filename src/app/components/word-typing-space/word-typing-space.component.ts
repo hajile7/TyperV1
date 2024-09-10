@@ -92,9 +92,9 @@ export class WordTypingSpaceComponent {
 
   ngOnInit() {
     this.wordService.getRandomWordArr().subscribe(data => {
-      console.log("data:" + data);
       this.preprocessedWords = data;
       this.testArr = this.convertToCharArr(this.shuffleArray(this.preprocessedWords));
+      this.currChar = this.testArr[0];
       this.convertCharstoWords();
     }); 
   }
