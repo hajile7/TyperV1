@@ -28,6 +28,10 @@ export class LoginComponent {
   imgUrl: any;
   newUserForm: FormData = new FormData();
 
+  ngOnInit() {
+    this.imgUrl = 'https://localhost:7192/Images/DefaultProfPic/V1DefaultProfilePic.webp'
+  }
+
   registerUser() {
     this.newUserForm.append("FirstName", this.firstName);
     this.newUserForm.append("LastName", this.lastName);
