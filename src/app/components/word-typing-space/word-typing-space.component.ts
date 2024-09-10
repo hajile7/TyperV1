@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { StatsBarComponent } from '../stats-bar/stats-bar.component';
+import { WordService } from '../../services/word.service';
 
 @Component({
   selector: 'app-word-typing-space',
@@ -11,17 +12,15 @@ import { StatsBarComponent } from '../stats-bar/stats-bar.component';
 })
 export class WordTypingSpaceComponent {
 
-  constructor(private renderer: Renderer2){}
+  constructor(private renderer: Renderer2, private wordService: WordService, private cdr: ChangeDetectorRef){}
 
   //Word arrays
 
   letters: string[] = ['a', 'b', 'c', 'd','e', 'f', 'g', 'h','i', 'j', 'k', 'l','m', 'n', 'o', 'p', 'q', 'r', 's','t','u','v','w','x','y','z']; 
 
-  tempWords: string[] = ["cow", "cat", "dog", "snake", "horse", "bird", "pig", "rat", "cow", "cat", "dog", "snake", "horse", "bird", "pig", "rat", "horse", "bird", "pig", "rat",
-    "horse", "bird", "pig", "rat", "horse", "pig", "rat", "horse", "thick", "create"
-  ];
+  preprocessedWords: string[] = [];
 
-  testArr: string[] = this.convertToCharArr(this.shuffleArray(this.tempWords));
+  testArr: string[] = [];
 
   words: { chars: string[]; startIndex: number }[] = [];
 
@@ -92,7 +91,12 @@ export class WordTypingSpaceComponent {
   //Functions
 
   ngOnInit() {
-    this.convertCharstoWords();
+    this.wordService.getRandomWordArr().subscribe(data => {
+      console.log("data:" + data);
+      this.preprocessedWords = data;
+      this.testArr = this.convertToCharArr(this.shuffleArray(this.preprocessedWords));
+      this.convertCharstoWords();
+    }); 
   }
 
   ngAfterViewInit(): void {
@@ -221,7 +225,10 @@ export class WordTypingSpaceComponent {
     this.spaces = 0;
     this.correctStatus = [];
     this.accuracy = 0;
-    this.testArr = this.convertToCharArr(this.shuffleArray(this.tempWords));
+    this.wordService.getRandomWordArr().subscribe(data => {
+      this.preprocessedWords = data;
+    });
+    this.testArr = this.convertToCharArr(this.shuffleArray(this.preprocessedWords));
     this.convertCharstoWords();
     this.currChar = this.testArr[0];
     this.startTime = 0;
@@ -266,9 +273,9 @@ export class WordTypingSpaceComponent {
     }
   }
 
-  convertToCharArr(tempWords: string[]): string[] {
+  convertToCharArr(preprocessedWords: string[]): string[] {
     let result: string[] = [];
-    tempWords.forEach(word => {
+    preprocessedWords.forEach(word => {
       result = result.concat(word.split(''));
       result.push("1")
     });
