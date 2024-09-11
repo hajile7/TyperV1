@@ -1,27 +1,42 @@
-html {background-color: #3c3838; color: white}
-div {background-color: #3c3838;  color: white; font-family: 'Courier New', Courier, monospace}
+body {
+    background-color: rgb(27, 27, 27);
+}
 
-.correct{
+html {
+    color: white;
+    background-color: rgb(27, 27, 27);
+}
+
+div {
+    font-family: 'Courier New', Courier, monospace;
+    background-color: rgb(27, 27, 27);
+}
+
+span {
+    color: white;
+}
+
+.correct {
     color: green;
 }
 
-.incorrect{
+.incorrect {
     color: red
 }
 
-.stats-span{
+.stats-span {
     display: inline-block;
     text-align: center;
     width: 17ch;  
     min-width: 10ch;  
 }
 
-.stats-bar{
+.stats-bar {
     font-size: 1rem;
     text-align: center;
 }
 
-.btn-plain-text{
+.btn-plain-text {
     background: none;
     border: none;
     padding: 0;
@@ -29,15 +44,15 @@ div {background-color: #3c3838;  color: white; font-family: 'Courier New', Couri
     cursor: pointer;
 }
 
-.btn-plain-text:hover{
+.btn-plain-text:hover {
     color: aqua;
 }
 
-.blurred{
+.blurred {
     filter: blur(.35rem);
 }
 
-.focusText{
+.focusText {
     font-size: 1rem;
     position: absolute;
     background: none;
@@ -45,9 +60,10 @@ div {background-color: #3c3838;  color: white; font-family: 'Courier New', Couri
     left: 50%;
     transform: translate(-50%, -50%);
     pointer-events: none;
+    color: white;
 }
 
-.textWrapper{
+.textWrapper {
     width: 100%;
     height: 100%;
     display: flex;
@@ -55,7 +71,7 @@ div {background-color: #3c3838;  color: white; font-family: 'Courier New', Couri
     position: relative;
 }
 
-.cursor{
+.cursor {
     display: inline-block;
     width: 1px; 
     background-color: white;
