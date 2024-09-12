@@ -32,6 +32,8 @@ export class WordTypingSpaceComponent {
 
   elapsedTime: number = 0;
 
+  accurateTime: number = 0;
+
   //Accuracy
 
   accuracy: number = 0;
@@ -84,11 +86,19 @@ export class WordTypingSpaceComponent {
 
   isFocused: boolean = true;
 
+  timerId: any;
+
+  pauseTime: number = 0;
+
+  activeSession: boolean = false;
+
   private keyListener: (() => void) | null = null;
 
   @ViewChild('textInput') textInput?: ElementRef;
 
   //Functions
+
+  //Lifecycle Functions
 
   ngOnInit() {
     this.wordService.getRandomWordArr().subscribe(data => {
@@ -107,13 +117,19 @@ export class WordTypingSpaceComponent {
     this.removeGlobalKeyListener();
   }
 
+  //Focus/blur functions
+
   onBlur(): void {
+    this.pauseTimer();
     this.isFocused = false;
     this.addGlobalKeyListener();
   }
 
   onFocus(): void {
     this.isFocused = true;
+    if(this.activeSession) {
+      this.resumeTimer();
+    }
     this.removeGlobalKeyListener();
   }
 
@@ -132,11 +148,13 @@ export class WordTypingSpaceComponent {
       this.keyListener = null;
   }
 
-  onInput(event: any): void {
+  //Handling input + current test state
 
-    if(!this.startTime) {
-      this.startTime = Date.now();
-      this.updateTimer();
+  onInput(event: any): void {
+    this.startTimer();
+
+    if(!this.activeSession) {
+      this.activeSession = true;
     }
 
     const lastTypedChar: string = event.key;
@@ -172,7 +190,6 @@ export class WordTypingSpaceComponent {
     this.calcAccuracy();
     this.calcSpeed();
     this.getNextChar();
-
   }
 
   getNextChar(): void {
@@ -188,35 +205,10 @@ export class WordTypingSpaceComponent {
     }
   }
 
-  calcAccuracy(): void {
-    this.totalKeysPressed = (this.includedKeysPressed + this.excludedKeysPressed) - this.spaces;
-    this.accuracy = this.correctKeys/this.totalKeysPressed;
-  }
-
-  calcTotalAccuracy(): void {
-    let total: number = 0;
-    this.accuracyArr.forEach(num => {
-      total += num;
-    })
-    this.totalAccuracy = total/this.accuracyArr.length;
-  }
-
-  calcSpeed(): void {
-    let avgWord: number = (this.testArr.length - this.testArr.filter(x => x == "1").length)/4.7;
-    this.speed = (avgWord/this.elapsedTime) * 60;
-  }
-
-  calcTotalSpeed(): void {
-    let total: number = 0;
-    this.speedArr.forEach(num => {
-      total += num;
-    })
-    this.totalSpeed = total/this.speedArr.length;
-  }
-
   startNewInstance(): void {
     this.calcTotalAccuracy();
     this.calcTotalSpeed();
+    this.activeSession = false;
     this.words = [];
     this.includedKeysPressed = 0;
     this.excludedKeysPressed = 0;
@@ -233,17 +225,71 @@ export class WordTypingSpaceComponent {
     this.currChar = this.testArr[0];
     this.startTime = 0;
     this.elapsedTime = 0;
+    this.accurateTime = 0;
     this.speed = 0;
     this.currIndex = 0;
+    this.pauseTimer();
+  }
+
+  //Calculation Functions
+
+  calcAccuracy(): void {
+    this.totalKeysPressed = (this.includedKeysPressed + this.excludedKeysPressed) - this.spaces;
+    this.accuracy = this.correctKeys/this.totalKeysPressed;
+  }
+
+  calcTotalAccuracy(): void {
+    let total: number = 0;
+    this.accuracyArr.forEach(num => {
+      total += num;
+    })
+    this.totalAccuracy = total/this.accuracyArr.length;
+  }
+
+  calcSpeed(): void {
+    let avgWord: number = (this.testArr.length - this.testArr.filter(x => x == "1").length)/4.7;
+    this.speed = (avgWord/this.accurateTime) * 60;
+  }
+
+  calcTotalSpeed(): void {
+    let total: number = 0;
+    this.speedArr.forEach(num => {
+      total += num;
+    })
+    this.totalSpeed = total/this.speedArr.length;
+  }
+
+  //Timer Functions
+
+  startTimer(): void {
+    if(!this.startTime) {
+      this.startTime = performance.now();
+      this.updateTimer();
+    }
   }
 
   updateTimer(): void {
-    this.currentTime = Date.now();
+    this.currentTime = performance.now();
+    this.accurateTime = (this.currentTime - this.startTime) / 1000;
     this.elapsedTime = Math.floor((this.currentTime - this.startTime) / 1000);
-    setTimeout(() => {
-      this.updateTimer();
-    }, 1000);
+    this.timerId = requestAnimationFrame(() => this.updateTimer());
   }
+
+  pauseTimer(): void {
+    if (this.timerId) {
+      cancelAnimationFrame(this.timerId);
+      this.timerId = null;
+    }
+  }
+
+  resumeTimer(): void {
+   if (!this.timerId) {
+     this.startTime = performance.now() - (this.elapsedTime * 1000);
+     this.updateTimer();
+   } 
+  }
+
+  //Array manipulations
 
   convertCharstoWords(): void {
     let currentWordChars: string[] = [];
@@ -253,21 +299,19 @@ export class WordTypingSpaceComponent {
       const char = this.testArr[i];
 
       if (char === '1') {
-        // When '1' is encountered, it denotes a space between words
         if (currentWordChars.length > 0) {
           this.words.push({ chars: currentWordChars, startIndex });
           currentWordChars = [];
         }
-        startIndex = i + 1; // Update startIndex for the next word
+        startIndex = i + 1; 
       } else {
         if (currentWordChars.length === 0) {
-          startIndex = i; // Set startIndex at the beginning of a new word
+          startIndex = i; 
         }
         currentWordChars.push(char);
       }
     }
 
-    // Add the last word if there is one
     if (currentWordChars.length > 0) {
       this.words.push({ chars: currentWordChars, startIndex });
     }
