@@ -166,10 +166,6 @@ export class WordTypingSpaceComponent {
       this.activeSession = true;
     }
 
-    if(this.prevChar) {
-      console.log("previous character: " + this.prevChar)
-    }
-
     const lastTypedChar: string = event.key;
 
     if(!this.letters.includes(lastTypedChar) && !(lastTypedChar == "Backspace" || lastTypedChar == "Shift" || lastTypedChar == " ")) {
@@ -200,7 +196,6 @@ export class WordTypingSpaceComponent {
       }
     }
 
-    console.log(this.currChar + " at: " + this.accurateTime);
     if(this.compensateForSpace) {
       this.bigraphsTypedArr.push({char: this.currChar, time: this.spaceTime, correct: this.correct});
     }
@@ -208,8 +203,6 @@ export class WordTypingSpaceComponent {
       this.bigraphsTypedArr.push({char: this.currChar, time: this.accurateTime, correct: this.correct});
     }
     
-    console.log(this.bigraphsTypedArr);
-
     if(this.compensateForSpace) {
       this.compensateForSpace = false;
     }
@@ -221,11 +214,9 @@ export class WordTypingSpaceComponent {
 
   getNextChar(): void {
     this.prevChar = this.currChar;
-    console.log("From get nextchar -- PrevChar: " + this.prevChar);
     if(this.prevChar == '1') {
       this.compensateForSpace = true;
       this.spaceTime = this.accurateTime;
-      console.log(this.spaceTime);
     }
     this.currChar = this.testArr[this.includedKeysPressed];
     if(this.includedKeysPressed == this.testArr.length - 1) {
@@ -239,16 +230,19 @@ export class WordTypingSpaceComponent {
   }
 
   startNewInstance(): void {
+    this.generateBigraphsDataArr();
     this.calcTotalAccuracy();
     this.calcTotalSpeed();
     this.activeSession = false;
+    this.bigraphsTypedArr = [];
+    this.bigraphsDataArr = [];
     this.words = [];
+    this.correctStatus = [];
     this.includedKeysPressed = 0;
     this.excludedKeysPressed = 0;
     this.totalKeysPressed = 0;
     this.correctKeys = 0;
     this.spaces = 0;
-    this.correctStatus = [];
     this.accuracy = 0;
     this.wordService.getRandomWordArr().subscribe(data => {
       this.preprocessedWords = data;
@@ -285,7 +279,6 @@ export class WordTypingSpaceComponent {
   }
 
   calcTotalSpeed(): void {
-    console.log(this.bigraphsDataArr);
     let total: number = 0;
     this.speedArr.forEach(num => {
       total += num;
@@ -351,6 +344,20 @@ export class WordTypingSpaceComponent {
     }
   }
 
+  generateBigraphsDataArr() {
+    if(this.bigraphsTypedArr.length >= 2) {
+      for(let i = this.bigraphsTypedArr.length - 1; i >= 1; i--) {
+        let correctStatus: boolean = true;
+        let newBigraph: string = this.bigraphsTypedArr[i - 1].char + this.bigraphsTypedArr[i].char;
+        if(this.bigraphsTypedArr[i - 1].correct == false || this.bigraphsTypedArr[i].correct == false) {
+          correctStatus = false;
+        }
+        this.bigraphsDataArr.push({bigraph: newBigraph, speed: (this.bigraphsTypedArr[i].time) - (this.bigraphsTypedArr[i - 1].time), correct: correctStatus});
+      }
+    }
+    this.bigraphsDataArr = this.bigraphsDataArr.filter(bigraphData => !bigraphData.bigraph.includes('1'));
+  }
+
   convertToCharArr(preprocessedWords: string[]): string[] {
     let result: string[] = [];
     preprocessedWords.forEach(word => {
@@ -368,21 +375,6 @@ export class WordTypingSpaceComponent {
       [arr[currIndex], arr[randIndex]] = [arr[randIndex], arr[currIndex]];
     }
     return arr;
-  }
-
-  generateBigraphsDataArr() {
-    if(this.bigraphsTypedArr.length >= 2) {
-      for(let i = this.bigraphsTypedArr.length - 1; i >= 1; i--) {
-        let correctStatus: boolean = true;
-        let newBigraph: string = this.bigraphsTypedArr[i - 1].char + this.bigraphsTypedArr[i].char;
-        if(this.bigraphsTypedArr[i - 1].correct == false || this.bigraphsTypedArr[i].correct == false) {
-          correctStatus = false;
-        }
-        this.bigraphsDataArr.push({bigraph: newBigraph, speed: (this.bigraphsTypedArr[i].time) - (this.bigraphsTypedArr[i - 1].time), correct: correctStatus});
-      }
-    }
-    console.log(this.bigraphsDataArr);
-    console.log(this.bigraphsDataArr.filter(bigraphData => !bigraphData.bigraph.includes('1')));
   }
 
 }
