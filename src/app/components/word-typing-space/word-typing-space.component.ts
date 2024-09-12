@@ -24,6 +24,11 @@ export class WordTypingSpaceComponent {
 
   words: { chars: string[]; startIndex: number }[] = [];
 
+  bigraphsTypedArr: { char: string; time: number; correct: boolean }[] = []; 
+
+  bigraphsDataArr: { bigraph: string; speed: number; correct: boolean }[] = []
+  
+
   //Time
 
   startTime: number = 0;
@@ -33,6 +38,8 @@ export class WordTypingSpaceComponent {
   elapsedTime: number = 0;
 
   accurateTime: number = 0;
+
+  spaceTime: number = 0;
 
   //Accuracy
 
@@ -91,6 +98,8 @@ export class WordTypingSpaceComponent {
   pauseTime: number = 0;
 
   activeSession: boolean = false;
+
+  compensateForSpace: boolean = false;
 
   private keyListener: (() => void) | null = null;
 
@@ -157,6 +166,10 @@ export class WordTypingSpaceComponent {
       this.activeSession = true;
     }
 
+    if(this.prevChar) {
+      console.log("previous character: " + this.prevChar)
+    }
+
     const lastTypedChar: string = event.key;
 
     if(!this.letters.includes(lastTypedChar) && !(lastTypedChar == "Backspace" || lastTypedChar == "Shift" || lastTypedChar == " ")) {
@@ -187,6 +200,20 @@ export class WordTypingSpaceComponent {
       }
     }
 
+    console.log(this.currChar + " at: " + this.accurateTime);
+    if(this.compensateForSpace) {
+      this.bigraphsTypedArr.push({char: this.currChar, time: this.spaceTime, correct: this.correct});
+    }
+    else {
+      this.bigraphsTypedArr.push({char: this.currChar, time: this.accurateTime, correct: this.correct});
+    }
+    
+    console.log(this.bigraphsTypedArr);
+
+    if(this.compensateForSpace) {
+      this.compensateForSpace = false;
+    }
+    
     this.calcAccuracy();
     this.calcSpeed();
     this.getNextChar();
@@ -194,6 +221,12 @@ export class WordTypingSpaceComponent {
 
   getNextChar(): void {
     this.prevChar = this.currChar;
+    console.log("From get nextchar -- PrevChar: " + this.prevChar);
+    if(this.prevChar == '1') {
+      this.compensateForSpace = true;
+      this.spaceTime = this.accurateTime;
+      console.log(this.spaceTime);
+    }
     this.currChar = this.testArr[this.includedKeysPressed];
     if(this.includedKeysPressed == this.testArr.length - 1) {
       this.accuracyArr.push(this.accuracy);
@@ -252,6 +285,7 @@ export class WordTypingSpaceComponent {
   }
 
   calcTotalSpeed(): void {
+    console.log(this.bigraphsDataArr);
     let total: number = 0;
     this.speedArr.forEach(num => {
       total += num;
@@ -289,7 +323,7 @@ export class WordTypingSpaceComponent {
    } 
   }
 
-  //Array manipulations
+  //Array creation and manipulation
 
   convertCharstoWords(): void {
     let currentWordChars: string[] = [];
@@ -334,6 +368,21 @@ export class WordTypingSpaceComponent {
       [arr[currIndex], arr[randIndex]] = [arr[randIndex], arr[currIndex]];
     }
     return arr;
+  }
+
+  generateBigraphsDataArr() {
+    if(this.bigraphsTypedArr.length >= 2) {
+      for(let i = this.bigraphsTypedArr.length - 1; i >= 1; i--) {
+        let correctStatus: boolean = true;
+        let newBigraph: string = this.bigraphsTypedArr[i - 1].char + this.bigraphsTypedArr[i].char;
+        if(this.bigraphsTypedArr[i - 1].correct == false || this.bigraphsTypedArr[i].correct == false) {
+          correctStatus = false;
+        }
+        this.bigraphsDataArr.push({bigraph: newBigraph, speed: (this.bigraphsTypedArr[i].time) - (this.bigraphsTypedArr[i - 1].time), correct: correctStatus});
+      }
+    }
+    console.log(this.bigraphsDataArr);
+    console.log(this.bigraphsDataArr.filter(bigraphData => !bigraphData.bigraph.includes('1')));
   }
 
 }
