@@ -12,7 +12,7 @@ import { WordService } from '../../services/word.service';
 })
 export class WordTypingSpaceComponent {
 
-  constructor(private renderer: Renderer2, private wordService: WordService, private cdr: ChangeDetectorRef){}
+  constructor(private renderer: Renderer2, private wordService: WordService){}
 
   //Word arrays
 
@@ -24,11 +24,10 @@ export class WordTypingSpaceComponent {
 
   words: { chars: string[]; startIndex: number }[] = [];
 
-  bigraphsTypedArr: { char: string; time: number; correct: boolean; charPushed: string }[] = []; 
+  charsTypedArr: { char: string; time: number; correct: boolean; charPushed: string }[] = []; 
 
-  bigraphsDataArr: { bigraph: string; speed: number; correct: boolean }[] = []
+  bigraphsDataArr: { bigraph: string; speed: number; correct: boolean }[] = [];
   
-
   //Time
 
   startTime: number = 0;
@@ -38,8 +37,6 @@ export class WordTypingSpaceComponent {
   elapsedTime: number = 0;
 
   accurateTime: number = 0;
-
-  spaceTime: number = 0;
 
   //Accuracy
 
@@ -77,9 +74,15 @@ export class WordTypingSpaceComponent {
 
   includedKeysPressed: number = 0;
 
-  spaces: number = 0;
-
   correctKeys: number = 0;
+
+  //User, Key, and Test Stats
+
+  currDate: any;
+
+  previousTest: { testDate: any; charCount: number; incorrectCount: number; mode: string; speed: number; accuracy: number }[] = [];
+
+  KeyData: { char: string; frequency: number; accuracy: number; speed: number }[] = [];
 
   //Others
 
@@ -99,7 +102,7 @@ export class WordTypingSpaceComponent {
 
   activeSession: boolean = false;
 
-  compensateForSpace: boolean = false;
+  userLetter: string = "";
 
   private keyListener: (() => void) | null = null;
 
@@ -162,20 +165,16 @@ export class WordTypingSpaceComponent {
   onInput(event: any): void {
     this.startTimer();
 
-    console.log(this.bigraphsTypedArr);
-
     if(!this.activeSession) {
+      this.currDate = new Date().toISOString();
       this.activeSession = true;
     }
 
     const lastTypedChar: string = event.key;
+    this.userLetter = lastTypedChar;
 
     if(!this.letters.includes(lastTypedChar) && !(lastTypedChar == "Backspace" || lastTypedChar == "Shift" || lastTypedChar == " ")) {
       this.excludedKeysPressed++;
-    }
-
-    if(lastTypedChar == " ") {
-      this.spaces++;
     }
 
     if(this.letters.includes(lastTypedChar) || lastTypedChar == " ") {
@@ -185,6 +184,7 @@ export class WordTypingSpaceComponent {
       }
       if (this.currChar == '1' && lastTypedChar == " ") {
         this.correct = true;
+        this.correctKeys++;
         this.correctStatus.push(true);
       }
       else if (this.currChar == lastTypedChar) {
@@ -198,30 +198,20 @@ export class WordTypingSpaceComponent {
       }
     }
 
-    if(this.compensateForSpace) {
-      this.bigraphsTypedArr.push({char: this.currChar, time: this.spaceTime, correct: this.correct, charPushed: lastTypedChar});
-    }
-    else {
-      this.bigraphsTypedArr.push({char: this.currChar, time: this.accurateTime, correct: this.correct, charPushed: lastTypedChar});
-    }
-    
-    if(this.compensateForSpace) {
-      this.compensateForSpace = false;
-    }
-    
     this.calcAccuracy();
     this.calcSpeed();
     this.getNextChar();
+    
   }
 
   getNextChar(): void {
-    this.prevChar = this.currChar;
-    if(this.prevChar == '1') {
-      this.compensateForSpace = true;
-      this.spaceTime = this.accurateTime;
+    if(this.letters.includes(this.userLetter) || this.userLetter == " ") {
+      this.charsTypedArr.push({char: this.currChar, time: this.accurateTime, correct: this.correct, charPushed: this.userLetter});
     }
+    this.prevChar = this.currChar;
     this.currChar = this.testArr[this.includedKeysPressed];
     if(this.includedKeysPressed == this.testArr.length - 1) {
+      this.previousTest.push({ testDate: this.currDate, charCount: this.testArr.length, incorrectCount: this.charsTypedArr.filter(c => c.correct == false).length, mode: "words", speed: this.speed, accuracy: this.accuracy});
       this.accuracyArr.push(this.accuracy);
       this.speedArr.push(this.speed);
       this.prevAccuracy = this.accuracy;
@@ -232,19 +222,29 @@ export class WordTypingSpaceComponent {
   }
 
   startNewInstance(): void {
-    this.generateBigraphsDataArr();
+    //to send to backend
+    console.table(this.charsTypedArr);
+    console.log(this.previousTest);               //last test instance
+    console.log(this.charsTypedArr.length);       //char total to add
+    console.log(this.accurateTime);               //time to add to total typing time
+    this.generateBigraphsDataArr();               //everything for bigraphs is in object
+    console.table(this.bigraphsDataArr);
+    this.generateKeyData();
+    console.table(this.KeyData);
     this.calcTotalAccuracy();
     this.calcTotalSpeed();
+    console.log(this.totalAccuracy);              //push accuracy
+    console.log(this.totalSpeed);                 //push speed
     this.activeSession = false;
-    this.bigraphsTypedArr = [];
+    this.charsTypedArr = [];
     this.bigraphsDataArr = [];
     this.words = [];
     this.correctStatus = [];
+    this.previousTest = [];
     this.includedKeysPressed = 0;
     this.excludedKeysPressed = 0;
     this.totalKeysPressed = 0;
     this.correctKeys = 0;
-    this.spaces = 0;
     this.accuracy = 0;
     this.wordService.getRandomWordArr().subscribe(data => {
       this.preprocessedWords = data;
@@ -263,7 +263,7 @@ export class WordTypingSpaceComponent {
   //Calculation Functions
 
   calcAccuracy(): void {
-    this.totalKeysPressed = (this.includedKeysPressed + this.excludedKeysPressed) - this.spaces;
+    this.totalKeysPressed = this.includedKeysPressed + this.excludedKeysPressed;
     this.accuracy = this.correctKeys/this.totalKeysPressed;
   }
 
@@ -348,17 +348,50 @@ export class WordTypingSpaceComponent {
   }
 
   generateBigraphsDataArr() {
-    if(this.bigraphsTypedArr.length >= 2) {
-      for(let i = this.bigraphsTypedArr.length - 1; i >= 1; i--) {
+    if(this.charsTypedArr.length >= 2) {
+      for(let i = this.charsTypedArr.length - 1; i >= 1; i--) {
         let correctStatus: boolean = true;
-        let newBigraph: string = this.bigraphsTypedArr[i - 1].char + this.bigraphsTypedArr[i].char;
-        if(this.bigraphsTypedArr[i - 1].correct == false || this.bigraphsTypedArr[i].correct == false) {
+        let newBigraph: string = this.charsTypedArr[i - 1].char + this.charsTypedArr[i].char;
+        if(this.charsTypedArr[i - 1].correct == false || this.charsTypedArr[i].correct == false) {
           correctStatus = false;
         }
-        this.bigraphsDataArr.push({bigraph: newBigraph, speed: (this.bigraphsTypedArr[i].time) - (this.bigraphsTypedArr[i - 1].time), correct: correctStatus});
+        this.bigraphsDataArr.push({bigraph: newBigraph, speed: (this.charsTypedArr[i].time) - (this.charsTypedArr[i - 1].time), correct: correctStatus});
       }
     }
-    this.bigraphsDataArr = this.bigraphsDataArr.filter(bigraphData => !bigraphData.bigraph.includes('1'));
+  }
+
+  generateKeyData() {
+    const frequencyMap = this.charsTypedArr.reduce((acc, current) => {
+      const char = current.char;
+      if (!acc[char]) {
+        acc[char] = { char: char, frequency: 0, correctCount: 0, totalSpeed: 0, bigraphCount: 0 };
+      }
+    
+      acc[char].frequency++;
+      if (current.correct) {
+        acc[char].correctCount++;
+      }
+    
+      // Find bigraphs where the current char is the second character
+      this.bigraphsDataArr.forEach(bigraphData => {
+        if (bigraphData.bigraph[1] === char) {
+          acc[char].totalSpeed += bigraphData.speed;
+          acc[char].bigraphCount++;
+        }
+      });
+    
+      return acc;
+    }, {} as { [key: string]: { char: string; frequency: number; correctCount: number; totalSpeed: number; bigraphCount: number } });
+    
+    // Convert to an array of objects, calculate average speed, and calculate accuracy
+    const frequencyArr = Object.values(frequencyMap).map(charData => ({
+      char: charData.char,
+      frequency: charData.frequency,
+      accuracy: (charData.correctCount / charData.frequency) * 100, // Accuracy in percentage
+      speed: charData.bigraphCount > 0 ? charData.totalSpeed / charData.bigraphCount : 0
+    }));
+
+    this.KeyData = frequencyArr;
   }
 
   convertToCharArr(preprocessedWords: string[]): string[] {
