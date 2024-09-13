@@ -44,8 +44,12 @@ span {
     cursor: pointer;
 }
 
-.btn-plain-text:hover {
-    color: aqua;
+.btn-plain-text {
+    color:white;
+    :hover {
+        color: aqua;
+    }
+    
 }
 
 .blurred {

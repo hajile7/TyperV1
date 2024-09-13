@@ -27,13 +27,13 @@
             <ul class="navbar-nav ms-auto">
                 @if(!isLoggedIn()) {
                   <li class="nav-item">
-                    <a class="nav-link" routerLink="/Login">Login<span class="bi bi-box-arrow-in-left" style="padding-left: .5ch;"></span></a>
+                    <a class="nav-link" routerLink="/Login">Login<i class="bi bi-box-arrow-in-left" style="padding-left: .5ch;"></i></a>
                   </li>
                 }
                 @else {
                   <li class="nav-item">
                     <!-- logout button need pointer style to function for some reason -->
-                    <a class="nav-link" style="cursor: pointer;" (click)="logout()">Logout<span class="bi bi-box-arrow-in-right" style="padding-left: .5ch;"></span></a>
+                    <a class="nav-link" style="cursor: pointer;" (click)="logout()">Logout<i class="bi bi-box-arrow-in-right" style="padding-left: .5ch;"></i></a>
                   </li>
                 }
               </ul>

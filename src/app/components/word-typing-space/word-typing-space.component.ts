@@ -24,7 +24,7 @@ export class WordTypingSpaceComponent {
 
   words: { chars: string[]; startIndex: number }[] = [];
 
-  bigraphsTypedArr: { char: string; time: number; correct: boolean }[] = []; 
+  bigraphsTypedArr: { char: string; time: number; correct: boolean; charPushed: string }[] = []; 
 
   bigraphsDataArr: { bigraph: string; speed: number; correct: boolean }[] = []
   
@@ -162,6 +162,8 @@ export class WordTypingSpaceComponent {
   onInput(event: any): void {
     this.startTimer();
 
+    console.log(this.bigraphsTypedArr);
+
     if(!this.activeSession) {
       this.activeSession = true;
     }
@@ -197,10 +199,10 @@ export class WordTypingSpaceComponent {
     }
 
     if(this.compensateForSpace) {
-      this.bigraphsTypedArr.push({char: this.currChar, time: this.spaceTime, correct: this.correct});
+      this.bigraphsTypedArr.push({char: this.currChar, time: this.spaceTime, correct: this.correct, charPushed: lastTypedChar});
     }
     else {
-      this.bigraphsTypedArr.push({char: this.currChar, time: this.accurateTime, correct: this.correct});
+      this.bigraphsTypedArr.push({char: this.currChar, time: this.accurateTime, correct: this.correct, charPushed: lastTypedChar});
     }
     
     if(this.compensateForSpace) {
@@ -274,8 +276,9 @@ export class WordTypingSpaceComponent {
   }
 
   calcSpeed(): void {
-    let avgWord: number = (this.testArr.length - this.testArr.filter(x => x == "1").length)/4.7;
-    this.speed = (avgWord/this.accurateTime) * 60;
+    const currTime = performance.now();
+    const elapsedTimeMins = (currTime - this.startTime) / 1000 / 60;
+    this.speed = (this.totalKeysPressed / 4.7) / elapsedTimeMins;
   }
 
   calcTotalSpeed(): void {

@@ -1,9 +1,8 @@
 <div class="container-fluid d-flex align-items-center" style="height: 94vh; padding-bottom: 18vh;">
   <div class="row w-100">
-      <div class="col-8 offset-2 stats-bar">
+      <div class="col-8 offset-2 stats-bar" style="color: white">
           <button class="btn-plain-text"
            type="button"
-           style="color: white"
            data-bs-toggle="collapse"
            data-bs-target="#scoreSpan" 
            aria-expanded="true"
@@ -56,7 +55,7 @@
               </span> 
             </ng-container>
           </span>
-          <span *ngIf="wordIndex < words.length - 1"
+          <span *ngIf="wordIndex < words.length - 1" style="font-size: 1.25rem;"
           [ngClass]="{'correct': correctStatus[word.startIndex + word.chars.length], 
           'incorrect': correctStatus[word.startIndex + word.chars.length] === false}">
           <span *ngIf="word.startIndex + word.chars.length === currIndex && isFocused"
