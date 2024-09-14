@@ -1,7 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
+import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { StatsBarComponent } from '../stats-bar/stats-bar.component';
 import { WordService } from '../../services/word.service';
+import { UserService } from '../../services/user.service';
+import { UserTypingTestDTO } from '../../models/user-typing-test-dto';
+import { UserStatsService } from '../../services/user-stats.service';
 
 @Component({
   selector: 'app-word-typing-space',
@@ -12,7 +15,7 @@ import { WordService } from '../../services/word.service';
 })
 export class WordTypingSpaceComponent {
 
-  constructor(private renderer: Renderer2, private wordService: WordService){}
+  constructor(private renderer: Renderer2, private wordService: WordService, private userSerive: UserService, private userStatsService: UserStatsService){}
 
   //Word arrays
 
@@ -80,7 +83,7 @@ export class WordTypingSpaceComponent {
 
   currDate: any;
 
-  previousTest: { testDate: any; charCount: number; incorrectCount: number; mode: string; speed: number; accuracy: number }[] = [];
+  previousTest: UserTypingTestDTO = {} as UserTypingTestDTO;
 
   KeyData: { char: string; frequency: number; accuracy: number; speed: number }[] = [];
 
@@ -211,7 +214,14 @@ export class WordTypingSpaceComponent {
     this.prevChar = this.currChar;
     this.currChar = this.testArr[this.includedKeysPressed];
     if(this.includedKeysPressed == this.testArr.length - 1) {
-      this.previousTest.push({ testDate: this.currDate, charCount: this.testArr.length, incorrectCount: this.charsTypedArr.filter(c => c.correct == false).length, mode: "words", speed: this.speed, accuracy: this.accuracy});
+      if(this.userSerive.isLoggedIn) {
+        this.previousTest.userId = this.userSerive.activeUser.userId;
+        this.previousTest.charCount = this.testArr.length;
+        this.previousTest.incorrectCount = this.charsTypedArr.filter(c => c.correct == false).length;
+        this.previousTest.mode = "words"; 
+        this.previousTest.speed = this.speed; 
+        this.previousTest.accuracy = this.accuracy * 100;
+      }
       this.accuracyArr.push(this.accuracy);
       this.speedArr.push(this.speed);
       this.prevAccuracy = this.accuracy;
@@ -223,8 +233,19 @@ export class WordTypingSpaceComponent {
 
   startNewInstance(): void {
     //to send to backend
-    console.table(this.charsTypedArr);
-    console.log(this.previousTest);               //last test instance
+    if(this.userSerive.isLoggedIn) {
+      console.log("Test Pushed");
+      console.log(this.previousTest);
+      this.userStatsService.addTest(this.previousTest).subscribe({
+        next: (response) => { 
+          console.log("Test successfully posted", response);
+        },
+        error: (error) => {
+          console.error("Error posting test", error);
+        }
+      });
+    }
+    
     console.log(this.charsTypedArr.length);       //char total to add
     console.log(this.accurateTime);               //time to add to total typing time
     this.generateBigraphsDataArr();               //everything for bigraphs is in object
@@ -240,7 +261,7 @@ export class WordTypingSpaceComponent {
     this.bigraphsDataArr = [];
     this.words = [];
     this.correctStatus = [];
-    this.previousTest = [];
+    this.previousTest = {} as UserTypingTestDTO;
     this.includedKeysPressed = 0;
     this.excludedKeysPressed = 0;
     this.totalKeysPressed = 0;
