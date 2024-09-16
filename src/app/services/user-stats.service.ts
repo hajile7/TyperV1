@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { UserService } from './user.service';
 import { UserTypingTestDTO } from '../models/user-typing-test-dto';
 import { UserBigraphStatDTO } from '../models/user-bigraph-stat-dto';
+import { KeyStatDTO } from '../models/key-stat-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +21,10 @@ export class UserStatsService {
 
   postBigraphStats(bigraphStatsDTO: UserBigraphStatDTO[]) {
     return this.http.post<UserBigraphStatDTO>(`${this.url}api/UserStats/bigraphs`, bigraphStatsDTO);
+  }
+
+  postKeyStats(keyStats: KeyStatDTO[]) {
+    return this.http.post<KeyStatDTO>(`${this.url}api/UserStats/keys`, keyStats);
   }
 
 

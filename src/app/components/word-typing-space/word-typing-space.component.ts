@@ -6,6 +6,7 @@ import { UserService } from '../../services/user.service';
 import { UserTypingTestDTO } from '../../models/user-typing-test-dto';
 import { UserStatsService } from '../../services/user-stats.service';
 import { UserBigraphStatDTO } from '../../models/user-bigraph-stat-dto';
+import { KeyStatDTO } from '../../models/key-stat-dto';
 
 @Component({
   selector: 'app-word-typing-space',
@@ -88,7 +89,7 @@ export class WordTypingSpaceComponent {
 
   bigraphsStats: UserBigraphStatDTO[] = [];
 
-  KeyData: { char: string; frequency: number; accuracy: number; speed: number }[] = [];
+  keyStats: KeyStatDTO[] = [];
 
   //Others
 
@@ -235,6 +236,11 @@ export class WordTypingSpaceComponent {
   }
 
   startNewInstance(): void {
+    this.generateUserBigraphStatDTO();   
+    this.generateKeyStats();
+    console.log(this.keyStats);
+            
+
     //to send to backend
     if(this.userService.isLoggedIn) {
       this.userStatsService.addTest(this.previousTest).subscribe({
@@ -245,11 +251,6 @@ export class WordTypingSpaceComponent {
           console.error("Error posting test", error);
         }
       });
-    }
-
-    this.generateUserBigraphStatDTO();               //everything for bigraphs is in object
-
-    if(this.userService.isLoggedIn) {
       this.userStatsService.postBigraphStats(this.bigraphsStats).subscribe({
         next: (response) => {
           console.log("Bigraph stats posted", response);
@@ -258,22 +259,30 @@ export class WordTypingSpaceComponent {
           console.error("Error posting bigraphs", error)
         }
       });
+      this.userStatsService.postKeyStats(this.keyStats).subscribe({
+        next: (response) => { 
+          console.log("Key stats posted", response);
+        },
+        error: (error) => {
+          console.error("Error posting keys", error);
+        }
+      });
     }
-    
+   
+
     console.log(this.charsTypedArr.length);       //char total to add
     console.log(this.accurateTime);               //time to add to total typing time
-    console.log("bigraphs: ");
-    this.generateKeyData();
-    console.table(this.KeyData);
     this.calcTotalAccuracy();
     this.calcTotalSpeed();
     console.log(this.totalAccuracy);              //push accuracy
     console.log(this.totalSpeed);                 //push speed
     this.activeSession = false;
+    this.keyStats = [];
     this.charsTypedArr = [];
     this.bigraphsDataArr = [];
     this.words = [];
     this.correctStatus = [];
+    this.preprocessedWords = [];
     this.previousTest = {} as UserTypingTestDTO;
     this.includedKeysPressed = 0;
     this.excludedKeysPressed = 0;
@@ -282,10 +291,10 @@ export class WordTypingSpaceComponent {
     this.accuracy = 0;
     this.wordService.getRandomWordArr().subscribe(data => {
       this.preprocessedWords = data;
+      this.testArr = this.convertToCharArr(this.shuffleArray(this.preprocessedWords));
+      this.convertCharstoWords();
+      this.currChar = this.testArr[0];
     });
-    this.testArr = this.convertToCharArr(this.shuffleArray(this.preprocessedWords));
-    this.convertCharstoWords();
-    this.currChar = this.testArr[0];
     this.startTime = 0;
     this.elapsedTime = 0;
     this.accurateTime = 0;
@@ -421,7 +430,7 @@ export class WordTypingSpaceComponent {
     }
   }
 
-  generateKeyData() {
+  generateKeyStats() {
     const frequencyMap = this.charsTypedArr.reduce((acc, current) => {
       const char = current.char;
       if (!acc[char]) {
@@ -450,7 +459,9 @@ export class WordTypingSpaceComponent {
       speed: charData.bigraphCount > 0 ? charData.totalSpeed / charData.bigraphCount : 0
     }));
 
-    this.KeyData = frequencyArr;
+    frequencyArr.forEach(k => {
+      this.keyStats.push({ userId: this.userService.activeUser.userId, key: k.char, totalTyped: k.frequency, accuracy: k.accuracy, speed: k.speed });
+    });
   }
 
   convertToCharArr(preprocessedWords: string[]): string[] {
