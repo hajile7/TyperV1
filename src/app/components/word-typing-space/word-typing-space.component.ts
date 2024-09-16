@@ -7,6 +7,7 @@ import { UserTypingTestDTO } from '../../models/user-typing-test-dto';
 import { UserStatsService } from '../../services/user-stats.service';
 import { UserBigraphStatDTO } from '../../models/user-bigraph-stat-dto';
 import { KeyStatDTO } from '../../models/key-stat-dto';
+import { UserStatsDTO } from '../../models/user-stats-dto';
 
 @Component({
   selector: 'app-word-typing-space',
@@ -90,6 +91,8 @@ export class WordTypingSpaceComponent {
   bigraphsStats: UserBigraphStatDTO[] = [];
 
   keyStats: KeyStatDTO[] = [];
+
+  userStats: UserStatsDTO = {} as UserStatsDTO;
 
   //Others
 
@@ -237,10 +240,9 @@ export class WordTypingSpaceComponent {
 
   startNewInstance(): void {
     this.generateUserBigraphStatDTO();   
-    this.generateKeyStats();
-    console.log(this.keyStats);
-            
-
+    this.generateKeyStats();            
+    this.generateUserStats();
+    console.log("User Stats: " + JSON.stringify(this.userStats));
     //to send to backend
     if(this.userService.isLoggedIn) {
       this.userStatsService.addTest(this.previousTest).subscribe({
@@ -267,15 +269,18 @@ export class WordTypingSpaceComponent {
           console.error("Error posting keys", error);
         }
       });
+      this.userStatsService.postStats(this.userStats).subscribe({
+        next: (response) => { 
+          console.log("Stats successfully posted", response);
+        },
+        error: (error) => {
+          console.error("Error posting stats", error);
+        }
+      });
     }
    
-
-    console.log(this.charsTypedArr.length);       //char total to add
-    console.log(this.accurateTime);               //time to add to total typing time
     this.calcTotalAccuracy();
-    this.calcTotalSpeed();
-    console.log(this.totalAccuracy);              //push accuracy
-    console.log(this.totalSpeed);                 //push speed
+    this.calcTotalSpeed();      
     this.activeSession = false;
     this.keyStats = [];
     this.charsTypedArr = [];
@@ -284,6 +289,7 @@ export class WordTypingSpaceComponent {
     this.correctStatus = [];
     this.preprocessedWords = [];
     this.previousTest = {} as UserTypingTestDTO;
+    this.userStats = {} as UserStatsDTO;
     this.includedKeysPressed = 0;
     this.excludedKeysPressed = 0;
     this.totalKeysPressed = 0;
@@ -411,7 +417,7 @@ export class WordTypingSpaceComponent {
         if((this.bigraphsStats.filter(s => s.bigraph == bigraph.bigraph).length == 0) || this.bigraphsStats.length == 0) {
           this.bigraphsStats.push({userId: this.userService.activeUser.userId, 
             bigraph: bigraph.bigraph, speed: bigraph.speed, corrCount: bigraph.correctCount, 
-            accuracy: bigraph.correctCount, quantity: 1})
+            accuracy: bigraph.correctCount * 100, quantity: 1})
         }
         //If is second+ instance of bigraph
         else {
@@ -423,7 +429,7 @@ export class WordTypingSpaceComponent {
               this.bigraphsStats[index].corrCount++;
             }
             this.bigraphsStats[index].speed =  (this.bigraphsStats[index].speed + bigraph.speed) / this.bigraphsStats[index].quantity;
-            this.bigraphsStats[index].accuracy = (this.bigraphsStats[index].corrCount) / this.bigraphsStats[index].quantity;
+            this.bigraphsStats[index].accuracy = ((this.bigraphsStats[index].corrCount) / this.bigraphsStats[index].quantity) * 100;
           }
         }
       })
@@ -462,6 +468,14 @@ export class WordTypingSpaceComponent {
     frequencyArr.forEach(k => {
       this.keyStats.push({ userId: this.userService.activeUser.userId, key: k.char, totalTyped: k.frequency, accuracy: k.accuracy, speed: k.speed });
     });
+  }
+
+  generateUserStats() {
+    this.userStats.userId = this.userService.activeUser.userId;
+    this.userStats.charsTyped = this.charsTypedArr.length;
+    this.userStats.timeTyped = Math.floor(this.accurateTime); //Have to use Math.floor for now
+    this.userStats.accuracy = this.prevAccuracy * 100;
+    this.userStats.WPM = this.prevSpeed;
   }
 
   convertToCharArr(preprocessedWords: string[]): string[] {

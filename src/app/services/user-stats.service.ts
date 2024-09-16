@@ -5,6 +5,7 @@ import { UserService } from './user.service';
 import { UserTypingTestDTO } from '../models/user-typing-test-dto';
 import { UserBigraphStatDTO } from '../models/user-bigraph-stat-dto';
 import { KeyStatDTO } from '../models/key-stat-dto';
+import { UserStatsDTO } from '../models/user-stats-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -25,6 +26,10 @@ export class UserStatsService {
 
   postKeyStats(keyStats: KeyStatDTO[]) {
     return this.http.post<KeyStatDTO>(`${this.url}api/UserStats/keys`, keyStats);
+  }
+
+  postStats(statDTO: UserStatsDTO) {
+    return this.http.post<UserStatsDTO>(`${this.url}api/UserStats/stats`, statDTO);
   }
 
 
