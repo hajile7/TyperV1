@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from './user.service';
 import { UserTypingTestDTO } from '../models/user-typing-test-dto';
+import { UserBigraphStatDTO } from '../models/user-bigraph-stat-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,11 @@ export class UserStatsService {
   url: string = "https://localhost:7192/";
 
   addTest(testDTO: UserTypingTestDTO) {
-    return this.http.post<UserTypingTestDTO>(`${this.url}api/UserStats`, testDTO);
+    return this.http.post<UserTypingTestDTO>(`${this.url}api/UserStats/tests`, testDTO);
+  }
+
+  postBigraphStats(bigraphStatsDTO: UserBigraphStatDTO[]) {
+    return this.http.post<UserBigraphStatDTO>(`${this.url}api/UserStats/bigraphs`, bigraphStatsDTO);
   }
 
 

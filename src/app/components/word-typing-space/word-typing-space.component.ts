@@ -5,6 +5,7 @@ import { WordService } from '../../services/word.service';
 import { UserService } from '../../services/user.service';
 import { UserTypingTestDTO } from '../../models/user-typing-test-dto';
 import { UserStatsService } from '../../services/user-stats.service';
+import { UserBigraphStatDTO } from '../../models/user-bigraph-stat-dto';
 
 @Component({
   selector: 'app-word-typing-space',
@@ -15,7 +16,7 @@ import { UserStatsService } from '../../services/user-stats.service';
 })
 export class WordTypingSpaceComponent {
 
-  constructor(private renderer: Renderer2, private wordService: WordService, private userSerive: UserService, private userStatsService: UserStatsService){}
+  constructor(private renderer: Renderer2, private wordService: WordService, private userService: UserService, private userStatsService: UserStatsService){}
 
   //Word arrays
 
@@ -29,7 +30,7 @@ export class WordTypingSpaceComponent {
 
   charsTypedArr: { char: string; time: number; correct: boolean; charPushed: string }[] = []; 
 
-  bigraphsDataArr: { bigraph: string; speed: number; correct: boolean }[] = [];
+  bigraphsDataArr: { bigraph: string; speed: number; incorrectCount: number; correctCount: number }[] = [];
   
   //Time
 
@@ -84,6 +85,8 @@ export class WordTypingSpaceComponent {
   currDate: any;
 
   previousTest: UserTypingTestDTO = {} as UserTypingTestDTO;
+
+  bigraphsStats: UserBigraphStatDTO[] = [];
 
   KeyData: { char: string; frequency: number; accuracy: number; speed: number }[] = [];
 
@@ -214,8 +217,8 @@ export class WordTypingSpaceComponent {
     this.prevChar = this.currChar;
     this.currChar = this.testArr[this.includedKeysPressed];
     if(this.includedKeysPressed == this.testArr.length - 1) {
-      if(this.userSerive.isLoggedIn) {
-        this.previousTest.userId = this.userSerive.activeUser.userId;
+      if(this.userService.isLoggedIn) {
+        this.previousTest.userId = this.userService.activeUser.userId;
         this.previousTest.charCount = this.testArr.length;
         this.previousTest.incorrectCount = this.charsTypedArr.filter(c => c.correct == false).length;
         this.previousTest.mode = "words"; 
@@ -233,9 +236,7 @@ export class WordTypingSpaceComponent {
 
   startNewInstance(): void {
     //to send to backend
-    if(this.userSerive.isLoggedIn) {
-      console.log("Test Pushed");
-      console.log(this.previousTest);
+    if(this.userService.isLoggedIn) {
       this.userStatsService.addTest(this.previousTest).subscribe({
         next: (response) => { 
           console.log("Test successfully posted", response);
@@ -245,11 +246,23 @@ export class WordTypingSpaceComponent {
         }
       });
     }
+
+    this.generateUserBigraphStatDTO();               //everything for bigraphs is in object
+
+    if(this.userService.isLoggedIn) {
+      this.userStatsService.postBigraphStats(this.bigraphsStats).subscribe({
+        next: (response) => {
+          console.log("Bigraph stats posted", response);
+        },
+        error: (error) => {
+          console.error("Error posting bigraphs", error)
+        }
+      });
+    }
     
     console.log(this.charsTypedArr.length);       //char total to add
     console.log(this.accurateTime);               //time to add to total typing time
-    this.generateBigraphsDataArr();               //everything for bigraphs is in object
-    console.table(this.bigraphsDataArr);
+    console.log("bigraphs: ");
     this.generateKeyData();
     console.table(this.KeyData);
     this.calcTotalAccuracy();
@@ -368,16 +381,43 @@ export class WordTypingSpaceComponent {
     }
   }
 
-  generateBigraphsDataArr() {
+  generateUserBigraphStatDTO() {
     if(this.charsTypedArr.length >= 2) {
       for(let i = this.charsTypedArr.length - 1; i >= 1; i--) {
-        let correctStatus: boolean = true;
+        let incorrectCount: number = 0;
+        let correctCount: number = 0;
         let newBigraph: string = this.charsTypedArr[i - 1].char + this.charsTypedArr[i].char;
         if(this.charsTypedArr[i - 1].correct == false || this.charsTypedArr[i].correct == false) {
-          correctStatus = false;
+          incorrectCount++;
         }
-        this.bigraphsDataArr.push({bigraph: newBigraph, speed: (this.charsTypedArr[i].time) - (this.charsTypedArr[i - 1].time), correct: correctStatus});
+        else {
+          correctCount++;
+        }
+        this.bigraphsDataArr.push({bigraph: newBigraph, speed: (this.charsTypedArr[i].time) - (this.charsTypedArr[i - 1].time), incorrectCount: incorrectCount, correctCount: correctCount});
+        incorrectCount = 0;
+        correctCount = 0;
       }
+      this.bigraphsDataArr.forEach((bigraph) => {
+        //If is first instance of bigraph
+        if((this.bigraphsStats.filter(s => s.bigraph == bigraph.bigraph).length == 0) || this.bigraphsStats.length == 0) {
+          this.bigraphsStats.push({userId: this.userService.activeUser.userId, 
+            bigraph: bigraph.bigraph, speed: bigraph.speed, corrCount: bigraph.correctCount, 
+            accuracy: bigraph.correctCount, quantity: 1})
+        }
+        //If is second+ instance of bigraph
+        else {
+          let index: number = this.bigraphsStats.findIndex(s => s.bigraph == bigraph.bigraph);
+
+          if(index >= 0) {
+            this.bigraphsStats[index].quantity++;
+            if(bigraph.correctCount == 1) {
+              this.bigraphsStats[index].corrCount++;
+            }
+            this.bigraphsStats[index].speed =  (this.bigraphsStats[index].speed + bigraph.speed) / this.bigraphsStats[index].quantity;
+            this.bigraphsStats[index].accuracy = (this.bigraphsStats[index].corrCount) / this.bigraphsStats[index].quantity;
+          }
+        }
+      })
     }
   }
 
@@ -393,7 +433,6 @@ export class WordTypingSpaceComponent {
         acc[char].correctCount++;
       }
     
-      // Find bigraphs where the current char is the second character
       this.bigraphsDataArr.forEach(bigraphData => {
         if (bigraphData.bigraph[1] === char) {
           acc[char].totalSpeed += bigraphData.speed;
@@ -404,11 +443,10 @@ export class WordTypingSpaceComponent {
       return acc;
     }, {} as { [key: string]: { char: string; frequency: number; correctCount: number; totalSpeed: number; bigraphCount: number } });
     
-    // Convert to an array of objects, calculate average speed, and calculate accuracy
     const frequencyArr = Object.values(frequencyMap).map(charData => ({
       char: charData.char,
       frequency: charData.frequency,
-      accuracy: (charData.correctCount / charData.frequency) * 100, // Accuracy in percentage
+      accuracy: (charData.correctCount / charData.frequency) * 100, 
       speed: charData.bigraphCount > 0 ? charData.totalSpeed / charData.bigraphCount : 0
     }));
 
