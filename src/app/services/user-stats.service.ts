@@ -42,6 +42,10 @@ export class UserStatsService {
     return this.http.get<UserStats>(`${this.url}api/UserStats/UserStats?userId=${userId}`);
   }
 
+  getKeyStats(userId: number): Observable<KeyStatDTO[]> {
+    return this.http.get<KeyStatDTO[]>(`${this.url}api/UserStats/UserKeys?userId=${userId}`);
+  }
+
 
 
 }

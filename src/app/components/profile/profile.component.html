@@ -1,41 +1,59 @@
 <div class="container">
-    <div class="row justify-content-around">
-      <div class="col-4 align-self-center">
-        <div class="row text-center">
-          <div class="col align-self-center" style="padding-top: 5%; padding-bottom: 5%;">
-            @if(getUser().image != undefined){
-              <img style="border-radius: 100%; height: 40%; width: 40%;" [src]="imgUrl">
-            }
-          <h3 style="padding-top: 5%;">{{getUser().userName}}</h3>
+  <div class="row justify-content-around">
+    <div class="col-4 align-self-center">
+      <div class="row text-center">
+        <div class="col align-self-center" style="padding-top: 5%; padding-bottom: 5%;">
+          @if(getUser().image != undefined){
+            <img style="border-radius: 100%; height: 40%; width: 40%;" [src]="imgUrl">
+          }
+        <h3 style="padding-top: 5%;">{{getUser().userName}}</h3>
+        </div>
+        <div class="col align-self-center" style="border-right: solid rgb(54, 53, 53) 3px;">
+          <div class="row" style="padding-bottom: 10%;">
+            Time Spent Typing:<br>{{userStats.timeTyped}}
           </div>
-          <div class="col align-self-center" style="border-right: solid rgb(54, 53, 53) 3px;">
-            <div class="row" style="padding-bottom: 10%;">
-              Time Spent Typing:<br>{{userStats.timeTyped}}
-            </div>
-            <div class="row">
-              Total Keys Typed:<br>{{userStats.charsTyped}}
-            </div>
+          <div class="row">
+            Total Keys Typed:<br>{{userStats.charsTyped}}
           </div>
         </div>
       </div>
-      <div id="StatsSection" class="col-6 align-self-center" style="margin-right: 10%">
-        <div class="row text-center">
-          <div class="col">
-            Avg. Speed:<br>{{userStats.wpm}} wpm
-          </div>
-          <div class="col">
-            Top Speed:<br>{{userStats.topWpm}} wpm
-          </div>
-          <div class="col">
-            Avg. Acc:<br>{{userStats.accuracy}}%
-          </div>
-          <div class="col">
-            Top Acc:<br>{{userStats.topAccuracy}}%
-          </div>
+    </div>
+    <div id="StatsSection" class="col-6 align-self-center" style="margin-right: 10%">
+      <div class="row text-center">
+        <div class="col">
+          Avg. Speed:<br>{{userStats.wpm}} wpm
         </div>
-          </div>
+        <div class="col">
+          Top Speed:<br>{{userStats.topWpm}} wpm
+        </div>
+        <div class="col">
+          Avg. Acc:<br>{{userStats.accuracy}}%
+        </div>
+        <div class="col">
+          Top Acc:<br>{{userStats.topAccuracy}}%
+        </div>
+      </div>
     </div>
   </div>
+</div>
+
+  <!-- start key information -->
+
+  <div class="container">
+    <div class="row justify-content-center">
+      <div style="text-align: center; padding-bottom: 1%;">
+        <u>Key Statistics</u>
+      </div>
+      <div class="col-2" style="padding-bottom: 1%;" *ngFor="let key of userKeyStats">
+        {{key.key}}: <span class="keyData" data-bs-toggle="tooltip" data-bs-placement="top" title="How many times you've typed this key">{{key.totalTyped}}</span>
+        | <span class="keyData" data-bs-toggle="tooltip" data-bs-placement="top" title="Total accuracy for this key">{{key.accuracy}}%</span>
+        | <span class="keyData" data-bs-toggle="tooltip" data-bs-placement="top" title="Avg. time, in seconds, it takes you to type this key in a sequence">{{key.speed}}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- start previous test information -->
+
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-8 align-self-center">

@@ -3,11 +3,11 @@
   margin: 0;
 }
 
-div{
+div {
   background-color: rgb(37, 37, 37);
 }
 
-.scrollContainer{
+.scrollContainer {
   max-height: 20vh;
   overflow-y: scroll;
   margin-top: 1%;
@@ -24,4 +24,11 @@ div{
   border-radius: 1rem;
 }
 
+.keyData {
+  cursor: pointer;
+}
+
+span:hover {
+  color: aqua;
+}
 
