@@ -6,6 +6,8 @@ import { UserTypingTestDTO } from '../models/user-typing-test-dto';
 import { UserBigraphStatDTO } from '../models/user-bigraph-stat-dto';
 import { KeyStatDTO } from '../models/key-stat-dto';
 import { UserStatsDTO } from '../models/user-stats-dto';
+import { Observable } from 'rxjs';
+import { UserStats } from '../models/user-stats';
 
 @Injectable({
   providedIn: 'root'
@@ -30,6 +32,14 @@ export class UserStatsService {
 
   postStats(statDTO: UserStatsDTO) {
     return this.http.post<UserStatsDTO>(`${this.url}api/UserStats/stats`, statDTO);
+  }
+
+  getPreviousTests(userId: number): Observable<UserTypingTestDTO[]> {
+    return this.http.get<UserTypingTestDTO[]>(`${this.url}api/UserStats/UserTests?userId=${userId}`);
+  }
+
+  getUserStats(userId: number): Observable<UserStats> {
+    return this.http.get<UserStats>(`${this.url}api/UserStats/UserStats?userId=${userId}`);
   }
 
 

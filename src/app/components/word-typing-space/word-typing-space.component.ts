@@ -222,12 +222,16 @@ export class WordTypingSpaceComponent {
     this.currChar = this.testArr[this.includedKeysPressed];
     if(this.includedKeysPressed == this.testArr.length - 1) {
       if(this.userService.isLoggedIn) {
+        if (!this.previousTest) {
+          this.previousTest = {} as UserTypingTestDTO;
+        }
         this.previousTest.userId = this.userService.activeUser.userId;
         this.previousTest.charCount = this.testArr.length;
         this.previousTest.incorrectCount = this.charsTypedArr.filter(c => c.correct == false).length;
         this.previousTest.mode = "words"; 
         this.previousTest.speed = this.speed; 
         this.previousTest.accuracy = this.accuracy * 100;
+        this.previousTest.date = new Date().toISOString();
       }
       this.accuracyArr.push(this.accuracy);
       this.speedArr.push(this.speed);
@@ -242,71 +246,98 @@ export class WordTypingSpaceComponent {
     this.generateUserBigraphStatDTO();   
     this.generateKeyStats();            
     this.generateUserStats();
-    console.log("User Stats: " + JSON.stringify(this.userStats));
-    //to send to backend
-    if(this.userService.isLoggedIn) {
+    
+    // to send to backend
+    if (this.userService.isLoggedIn) {
       this.userStatsService.addTest(this.previousTest).subscribe({
         next: (response) => { 
           console.log("Test successfully posted", response);
+          this.resetPreviousTest(); 
         },
         error: (error) => {
           console.error("Error posting test", error);
+          this.resetPreviousTest();
         }
       });
+  
       this.userStatsService.postBigraphStats(this.bigraphsStats).subscribe({
         next: (response) => {
           console.log("Bigraph stats posted", response);
+          this.resetBigraphsStats();
         },
         error: (error) => {
-          console.error("Error posting bigraphs", error)
+          console.error("Error posting bigraphs", error);
+          this.resetBigraphsStats(); 
         }
       });
+  
       this.userStatsService.postKeyStats(this.keyStats).subscribe({
         next: (response) => { 
           console.log("Key stats posted", response);
+          this.resetKeyStats(); 
         },
         error: (error) => {
           console.error("Error posting keys", error);
+          this.resetKeyStats();
         }
       });
+  
       this.userStatsService.postStats(this.userStats).subscribe({
         next: (response) => { 
           console.log("Stats successfully posted", response);
+          this.resetUserStats(); 
         },
         error: (error) => {
           console.error("Error posting stats", error);
+          this.resetUserStats();
         }
       });
     }
-   
+  
     this.calcTotalAccuracy();
     this.calcTotalSpeed();      
-    this.activeSession = false;
-    this.keyStats = [];
     this.charsTypedArr = [];
     this.bigraphsDataArr = [];
     this.words = [];
     this.correctStatus = [];
     this.preprocessedWords = [];
-    this.previousTest = {} as UserTypingTestDTO;
-    this.userStats = {} as UserStatsDTO;
+    this.activeSession = false;
     this.includedKeysPressed = 0;
     this.excludedKeysPressed = 0;
     this.totalKeysPressed = 0;
     this.correctKeys = 0;
     this.accuracy = 0;
+    
     this.wordService.getRandomWordArr().subscribe(data => {
       this.preprocessedWords = data;
       this.testArr = this.convertToCharArr(this.shuffleArray(this.preprocessedWords));
       this.convertCharstoWords();
       this.currChar = this.testArr[0];
     });
+  
     this.startTime = 0;
     this.elapsedTime = 0;
     this.accurateTime = 0;
     this.speed = 0;
     this.currIndex = 0;
+  
     this.pauseTimer();
+  }
+
+  resetPreviousTest(): void {
+    this.previousTest = {} as UserTypingTestDTO;
+  }
+  
+  resetBigraphsStats(): void {
+    this.bigraphsStats = [];
+  }
+  
+  resetKeyStats(): void {
+    this.keyStats = [];
+  }
+  
+  resetUserStats(): void {
+    this.userStats = {} as UserStatsDTO;
   }
 
   //Calculation Functions

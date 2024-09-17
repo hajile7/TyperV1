@@ -6,5 +6,6 @@ export interface UserTypingTestDTO {
     mode?: string; 
     speed?: number; 
     accuracy?: number;
+    date?: string;
     
 }

@@ -1,0 +1,27 @@
+.row {
+  background-color: rgb(37, 37, 37); 
+  margin: 0;
+}
+
+div{
+  background-color: rgb(37, 37, 37);
+}
+
+.scrollContainer{
+  max-height: 20vh;
+  overflow-y: scroll;
+  margin-top: 1%;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.container {
+  margin-top: 5vh; 
+  max-width: 95vw; 
+  border-radius: 1rem;
+}
+
+
