@@ -20,15 +20,37 @@ div {
 
 .container {
   margin-top: 5vh; 
+  margin-bottom: 5vh;
   max-width: 95vw; 
   border-radius: 1rem;
 }
 
-.keyData {
+.smallImg {
+  font-size: .65rem;
+  padding-left: .15%;
+  position: relative;
+  top: -2px;
   cursor: pointer;
+
 }
 
-span:hover {
-  color: aqua;
+.keyStatsTips {
+  font-size: 1.15rem;
+  text-align: center; 
+  padding-top: .5%;
+  padding-bottom: .5%;
+  :hover{
+    color:aqua;
+  }
+}
+
+
+
+.userStats {
+  background-color: rgb(27, 27, 27);
+  border-radius: 1rem;
+  padding-top: 5%;
+  padding-bottom: 5%;
+  color: rgb(207,207,207);
 }
 

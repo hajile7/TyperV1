@@ -1,6 +1,8 @@
 <div class="row justify-content-center" *ngFor="let test of testList; let i = index">
-    <div style="padding-bottom: 2%; text-align: center;">{{i+1}}: Date: {{test.date}} <i class="bi bi-three-dots-vertical"></i> 
-        Mode: {{test.mode}} <i class="bi bi-three-dots-vertical"></i> {{test.charCount}} | {{test.incorrectCount}}
-        <i class="bi bi-arrow-right" style="padding-right: 1%"></i> {{test.speed}} wpm at {{test.accuracy}}% accuracy
+    <div class="centerDiv">
+        <div class="testContainer">{{i+1}}: Date: {{test.date}} | 
+            {{test.mode}} | {{test.charCount}}({{test.incorrectCount}})
+            <i class="bi bi-arrow-right" style="padding-right: 1%"></i> {{test.speed}} wpm &#64; {{test.accuracy}}% accuracy
+        </div>
     </div>
 </div>

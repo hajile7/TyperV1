@@ -8,6 +8,7 @@ import { UserStatsService } from '../../services/user-stats.service';
 import { UserBigraphStatDTO } from '../../models/user-bigraph-stat-dto';
 import { KeyStatDTO } from '../../models/key-stat-dto';
 import { UserStatsDTO } from '../../models/user-stats-dto';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-word-typing-space',
@@ -18,7 +19,9 @@ import { UserStatsDTO } from '../../models/user-stats-dto';
 })
 export class WordTypingSpaceComponent {
 
-  constructor(private renderer: Renderer2, private wordService: WordService, private userService: UserService, private userStatsService: UserStatsService){}
+  constructor(private renderer: Renderer2, private wordService: WordService,
+    private userService: UserService, private userStatsService: UserStatsService,
+    private router: Router){}
 
   //Word arrays
 
@@ -129,10 +132,20 @@ export class WordTypingSpaceComponent {
       this.currChar = this.testArr[0];
       this.convertCharstoWords();
     }); 
+    this.login();
+  }
+
+  login() {
+    this.userService.login("dev", "dev").subscribe((response) => {
+      this.userService.activeUser = response;
+      this.userService.isLoggedIn = true;
+      this.router.navigate(["/Home"]);
+    })
   }
 
   ngAfterViewInit(): void {
     this.textInput?.nativeElement.focus();
+    
   }
 
   ngOnDestroy(): void {

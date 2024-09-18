@@ -1,3 +1,5 @@
+  <!-- start user stats -->
+
 <div class="container">
   <div class="row justify-content-around">
     <div class="col-4 align-self-center">
@@ -8,29 +10,29 @@
           }
         <h3 style="padding-top: 5%;">{{getUser().userName}}</h3>
         </div>
-        <div class="col align-self-center" style="border-right: solid rgb(54, 53, 53) 3px;">
-          <div class="row" style="padding-bottom: 10%;">
-            Time Spent Typing:<br>{{userStats.timeTyped}}
+        <div class="col align-self-center" style="border-right: solid rgb(54, 53, 53) 3px; padding-right: 20%;">
+          <div class="row align-self-center text-center userStats" style="margin-bottom: 15%;">
+            <span style="color: rgb(207, 207, 207)"><b>Time Spent Typing:</b></span><br><span>{{userStats.timeTyped}}</span>
           </div>
-          <div class="row">
-            Total Keys Typed:<br>{{userStats.charsTyped}}
+          <div class="row align-self-center text-center userStats">
+            <span style="color: rgb(207, 207, 207)"><b>Total Keys Typed:</b></span><br><span>{{userStats.charsTyped}}</span>
           </div>
         </div>
       </div>
     </div>
     <div id="StatsSection" class="col-6 align-self-center" style="margin-right: 10%">
       <div class="row text-center">
-        <div class="col">
-          Avg. Speed:<br>{{userStats.wpm}} wpm
+        <div class="col" >
+          <div class="userStats"><b>Avg. Speed:</b><br><br>{{userStats.wpm.toFixed(2)}}wpm</div>
         </div>
         <div class="col">
-          Top Speed:<br>{{userStats.topWpm}} wpm
+          <div class="userStats"><b>Top Speed:</b><br><br>{{userStats.topWpm.toFixed(2)}}wpm</div>
         </div>
         <div class="col">
-          Avg. Acc:<br>{{userStats.accuracy}}%
+          <div class="userStats"><b>Avg. Acc:</b><br><br>{{userStats.accuracy}}%</div>
         </div>
         <div class="col">
-          Top Acc:<br>{{userStats.topAccuracy}}%
+          <div class="userStats"><b>Top Acc:</b><br><br>{{userStats.topAccuracy}}%</div>
         </div>
       </div>
     </div>
@@ -39,30 +41,47 @@
 
   <!-- start key information -->
 
-  <div class="container">
-    <div class="row justify-content-center">
-      <div style="text-align: center; padding-bottom: 1%;">
-        <u>Key Statistics</u>
-      </div>
-      <div class="col-2" style="padding-bottom: 1%;" *ngFor="let key of userKeyStats">
-        {{key.key}}: <span class="keyData" data-bs-toggle="tooltip" data-bs-placement="top" title="How many times you've typed this key">{{key.totalTyped}}</span>
-        | <span class="keyData" data-bs-toggle="tooltip" data-bs-placement="top" title="Total accuracy for this key">{{key.accuracy}}%</span>
-        | <span class="keyData" data-bs-toggle="tooltip" data-bs-placement="top" title="Avg. time, in seconds, it takes you to type this key in a sequence">{{key.speed}}</span>
-      </div>
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="keyStatsTips">
+      <span style="cursor: pointer; color: rgb(207, 207, 207)" data-bs-html="true"
+      data-bs-toggle="tooltip" data-bs-placement="top" title=
+      "Format:<br><u>K</u>ey: <u>T</u>otal Times Typed | Average <u>A</u>ccuracy |<br> 
+      Average Typing <u>S</u>peed(sec) <br>K: T | A | S"><b>Key Statistics</b><i class="bi bi-info-circle smallImg" ></i></span>
+    </div>
+    <div class="col-2" style="padding-bottom: 1%;" *ngFor="let key of userKeyStats">
+      {{key.key}}: <span>{{key.totalTyped}}</span>
+      | <span>{{key.accuracy}}%</span>
+      | <span>{{key.speed.toFixed(3)}}</span>
     </div>
   </div>
+</div>
+
+  <!-- start user bigraph information --> 
+
+<div class="container">
+  <div class="row justify-content-center">
+    placeholder
+  </div>
+</div>
 
   <!-- start previous test information -->
 
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-8 align-self-center">
-        <div style="text-align: center;">
-          <u>Recent Tests</u>
-        </div>
-        <div class="scrollContainer">
-          <app-user-test></app-user-test>
-        </div>
-      </div>  
-    </div>
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-8 align-self-center">
+      <div class="keyStatsTips">
+        <span style="cursor: pointer; color: rgb(207, 207, 207)" data-bs-html="true"
+        data-bs-toggle="tooltip" data-bs-placement="top" title=
+        "Format:<br><u>D</u>ate/Time(UTC) |<br> <u>M</u>ode | 
+        <br><u>T</u>otal Characters<br>(<u>I</u>ncorrect Characters) 
+        <br>D | M | T(I)"><b>Recent Tests</b>
+        <i class="bi bi-info-circle smallImg" ></i></span>
+      </div>
+      <div class="scrollContainer">
+        <app-user-test></app-user-test>
+      </div>
+    </div>  
   </div>
+</div>
+

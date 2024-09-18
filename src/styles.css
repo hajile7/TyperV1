@@ -36,16 +36,12 @@ span {
     background: none;
     border: none;
     padding: 0;
-    color: inherit;
+    color: white;
     cursor: pointer;
 }
 
-.btn-plain-text {
-    color:white;
-    :hover {
-        color: aqua;
-    }
-    
+.btn-plain-text:hover {
+    color: aqua;
 }
 
 .blurred {
@@ -91,4 +87,7 @@ span {
     }
   }
 
-
+.tooltip-inner {
+    font-size: .72rem;
+    
+}

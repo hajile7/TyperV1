@@ -5,6 +5,7 @@ import { UserStatsService } from '../../services/user-stats.service';
 import { UserStats } from '../../models/user-stats';
 import { KeyStatDTO } from '../../models/key-stat-dto';
 import { CommonModule } from '@angular/common';
+import { UserBigraphStatDTO } from '../../models/user-bigraph-stat-dto';
 
 @Component({
   selector: 'app-profile',
@@ -22,6 +23,8 @@ export class ProfileComponent {
   userStats: UserStats = {} as UserStats;
 
   userKeyStats: KeyStatDTO[] = [];
+
+  userBigraphStats: UserBigraphStatDTO[] = [];
 
   ngOnInit() {
     this.imgUrl = this.createImgPath(this.getUser().image.imagePath)
