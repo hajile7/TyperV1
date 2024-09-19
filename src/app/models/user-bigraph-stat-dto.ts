@@ -4,7 +4,7 @@ export interface UserBigraphStatDTO {
     bigraph: string;
     speed: number;
     corrCount: number;
-    accuracy:number;
+    accuracy: number;
     quantity: number;
 
 }

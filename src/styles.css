@@ -91,3 +91,31 @@ span {
     font-size: .72rem;
     
 }
+
+.customPopover .popover-header {
+    cursor: default;
+    border: 1px solid white;
+    text-align: center;
+    background-color: rgb(48, 13, 82);
+    color:white;
+    font-size: 1rem;
+}
+  
+.customPopover .popover-body {
+    cursor: default;
+
+    border: 1px solid white;
+    background-color: black;
+    color:white;
+    font-size: 1rem;
+    div{
+        background-color: black;
+    }
+    span:hover{
+        cursor: pointer;
+        color: aqua;
+    }
+
+}         
+
+

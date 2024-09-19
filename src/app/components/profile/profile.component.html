@@ -22,17 +22,17 @@
     </div>
     <div id="StatsSection" class="col-6 align-self-center" style="margin-right: 10%">
       <div class="row text-center">
-        <div class="col" >
-          <div class="userStats"><b>Avg. Speed:</b><br><br>{{userStats.wpm.toFixed(2)}}wpm</div>
+        <div *ngIf="userStats.wpm != null" class="col" >
+          <div class="userStats"><b>Avg. Speed:</b><br>{{userStats.wpm.toFixed(2)}}wpm</div>
+        </div>
+        <div *ngIf="userStats.topWpm != null" class="col">
+          <div class="userStats"><b>Top Speed:</b><br>{{userStats.topWpm.toFixed(2)}}wpm</div>
         </div>
         <div class="col">
-          <div class="userStats"><b>Top Speed:</b><br><br>{{userStats.topWpm.toFixed(2)}}wpm</div>
+          <div class="userStats"><b>Avg. Acc:</b><br>{{userStats.accuracy}}%</div>
         </div>
         <div class="col">
-          <div class="userStats"><b>Avg. Acc:</b><br><br>{{userStats.accuracy}}%</div>
-        </div>
-        <div class="col">
-          <div class="userStats"><b>Top Acc:</b><br><br>{{userStats.topAccuracy}}%</div>
+          <div class="userStats"><b>Top Acc:</b><br>{{userStats.topAccuracy}}%</div>
         </div>
       </div>
     </div>
@@ -47,12 +47,12 @@
       <span style="cursor: pointer; color: rgb(207, 207, 207)" data-bs-html="true"
       data-bs-toggle="tooltip" data-bs-placement="top" title=
       "Format:<br><u>K</u>ey: <u>T</u>otal Times Typed | Average <u>A</u>ccuracy |<br> 
-      Average Typing <u>S</u>peed(sec) <br>K: T | A | S"><b>Key Statistics</b><i class="bi bi-info-circle smallImg" ></i></span>
+      Average Typing <u>S</u>peed(sec) <br>K: T | A | S"><b style="text-decoration: underline;">Key Statistics</b><i class="bi bi-info-circle smallImg" ></i></span>
     </div>
-    <div class="col-2" style="padding-bottom: 1%;" *ngFor="let key of userKeyStats">
-      {{key.key}}: <span>{{key.totalTyped}}</span>
+    <div class="col-2 " style="padding-bottom: 1%; " *ngFor="let key of userKeyStats">
+      <span class="biChar">{{key.key}}</span>: <span>{{key.totalTyped}}</span>
       | <span>{{key.accuracy}}%</span>
-      | <span>{{key.speed.toFixed(3)}}</span>
+      | <span *ngIf="key.speed != null">{{key.speed.toFixed(3)}}</span>
     </div>
   </div>
 </div>
@@ -61,21 +61,46 @@
 
 <div class="container">
   <div class="row justify-content-center">
-    placeholder
+    <div class="keyStatsTips">
+      <span style="cursor: pointer; color: rgb(207, 207, 207)" data-bs-html="true"
+      data-bs-toggle="tooltip" data-bs-placement="top" title=
+      "Format:<br><u>B</u>igraph: <br><u>T</u>otal Times Typed | Average <u>A</u>ccuracy |<br> 
+      Average Typing <u>S</u>peed(sec) <br>B: T | A | S"><b style="text-decoration: underline;">Bigraph Statistics</b>
+      <i class="bi bi-info-circle smallImg" ></i></span>
+      <span class="currBigraphPopover" data-bs-toggle="popover" 
+      data-bs-placement="top" data-bs-trigger="click" data-bs-html="true"
+      data-bs-title="Select Key" data-bs-custom-class="customPopover"
+      data-bs-content="<div id='popoverContent'>
+        <span>A </span><span>B </span><span>C </span><span>D </span>
+        <span>E </span><span>F </span><span>G </span><span>H </span>
+        <span>I </span><span>J </span><span>K </span><span>L </span>
+        <span>M </span><span>N </span><span>O </span><span>P </span>
+        <span>Q </span><span>R </span><span>S </span><span>T </span>
+        <span>U </span><span>V </span><span>W </span><span>X </span>
+        <span>Y </span><span>Z </span><span>_ </span>
+      </div>">
+       [{{currBigraph}}]
+      </span>
+    </div>
+    <div class="col-2" style="padding-bottom: 1%;" *ngFor="let bigraph of userBigraphStats">
+      <span class="biChar">{{bigraph.bigraph}}</span>: <span>{{bigraph.totalTyped}}</span>
+      | <span>{{bigraph.accuracy}}%</span>
+      | <span>{{bigraph.speed.toFixed(3)}}</span>
+    </div>
   </div>
 </div>
 
   <!-- start previous test information -->
 
-<div class="container">
-  <div class="row justify-content-center">
-    <div class="col-8 align-self-center">
-      <div class="keyStatsTips">
+<div class="container" style="padding: 0">
+  <div class="row justify-content-center" style="background-color: rgb(27, 27, 27);">
+    <div class="col-8 align-self-center" style="border-radius: 1rem;">
+      <div class="recentTests">
         <span style="cursor: pointer; color: rgb(207, 207, 207)" data-bs-html="true"
         data-bs-toggle="tooltip" data-bs-placement="top" title=
         "Format:<br><u>D</u>ate/Time(UTC) |<br> <u>M</u>ode | 
         <br><u>T</u>otal Characters<br>(<u>I</u>ncorrect Characters) 
-        <br>D | M | T(I)"><b>Recent Tests</b>
+        <br>D | M | T(I)"><b style="text-decoration: underline;">Recent Tests</b>
         <i class="bi bi-info-circle smallImg" ></i></span>
       </div>
       <div class="scrollContainer">

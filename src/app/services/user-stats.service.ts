@@ -8,6 +8,7 @@ import { KeyStatDTO } from '../models/key-stat-dto';
 import { UserStatsDTO } from '../models/user-stats-dto';
 import { Observable } from 'rxjs';
 import { UserStats } from '../models/user-stats';
+import { UserBigraphStat } from '../models/user-bigraph-stat';
 
 @Injectable({
   providedIn: 'root'
@@ -44,6 +45,10 @@ export class UserStatsService {
 
   getKeyStats(userId: number): Observable<KeyStatDTO[]> {
     return this.http.get<KeyStatDTO[]>(`${this.url}api/UserStats/UserKeys?userId=${userId}`);
+  }
+
+  getBigraphStats(userId: number, key: string): Observable<UserBigraphStat[]> {
+    return this.http.get<UserBigraphStat[]>(`${this.url}api/UserStats/UserSpecificBigraphs?userId=${userId}&key=${key}`)
   }
 
 
