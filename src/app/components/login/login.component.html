@@ -1,7 +1,6 @@
-<div class="container-fluid min-vh-100 d-flex align-items-center justify-content-center">
-    <div class="row w-100">
+    <div class="row w-100 justify-content-center loginContainer">
         <!-- Login form (left) -->
-        <div class="col-2 offset-3">
+        <div class="col-2 offset-2">
             <h2>Login</h2>
             <div class="form-floating mb-3">
                 <input id="loginUsername" type="text" class="form-control" [(ngModel)]="username">
@@ -45,16 +44,18 @@
                 <input id="confirmPassword" type="password" class="form-control" [(ngModel)]="confirmPassword">
                 <label for="confirmPassword">Confirm Password</label>
             </div>
-            <div>
-                <label for="profilePic" style="color: white;">Upload a Profile Picture (optional):</label>
-                <br/><br/>
-                <input id="profilePic" style="color: white;" type="file" (change)="onFileSelect($event)">
-                @if(imgUrl != undefined){
-                    <img [src]="imgUrl" style="width: 10rem; height: 10rem; border-radius: 100%;" >
-                }
+            <div class="form-floating mb-3" style="display: none;">
+                <input id="date" type="text" class="form-control" [(ngModel)]="joined">
             </div>
             <br/>
             <button (click)="registerUser()" type="button" class="btn btn-light">Register</button>
-    </div>
-</div>
+        </div>
+        <div class="col-2 regImageContainer">
+            <label for="profilePic">Upload a Profile Picture (optional):</label>
+            <br/><br/>
+            @if(imgUrl != undefined){
+                <img [src]="imgUrl" style="width: 10rem; height: 10rem; border-radius: 100%;" >
+            }
+            <input style="padding-top: 10%;" type="file" (change)="onFileSelect($event)">
+        </div>
 

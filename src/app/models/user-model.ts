@@ -1,5 +1,6 @@
 export interface UserModel {
     userId: number;
+    joined: string;
     firstName: string;
     lastName: string;
     userName: string;

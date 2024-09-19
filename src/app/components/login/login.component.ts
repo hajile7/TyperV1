@@ -23,6 +23,7 @@ export class LoginComponent {
   password: string = "";
   registerPassword: string = "";
   confirmPassword: string = "";
+  joined: string = ""
 
   fileName: string = "";
   imgUrl: any;
@@ -38,12 +39,14 @@ export class LoginComponent {
     this.newUserForm.append("UserName", this.registerUsername);
     this.newUserForm.append("Password", this.registerPassword);
     this.newUserForm.append("email", this.email);
+    this.newUserForm.append("joined", new Date().toISOString());
 
     this.userService.addUser(this.newUserForm).subscribe((response) => {
       this.fileName = "";
       this.firstName = "";
       this.lastName = "";
       this.username = "";
+      this.joined = "";
       this.newUserForm = new FormData();
       this.router.navigate(["/Home"])
     })

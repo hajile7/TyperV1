@@ -87,17 +87,21 @@ span {
     }
   }
 
-.tooltip-inner {
-    font-size: .72rem;
-    
+  /* Start Bootstrap Component Styling */
+
+.customTooltip .tooltip-inner {
+    font-size: .85rem;
+    text-align: left;
+    background-color: black;
+    border: 1px solid aqua;
 }
 
 .customPopover .popover-header {
     cursor: default;
     border: 1px solid white;
     text-align: center;
-    background-color: rgb(48, 13, 82);
-    color:white;
+    background-color: aqua;
+    color:black;
     font-size: 1rem;
 }
   

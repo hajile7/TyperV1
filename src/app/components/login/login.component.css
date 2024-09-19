@@ -7,3 +7,20 @@
 h2 {
     color: white;
 }
+
+.loginContainer {
+    height: 70vh;
+    margin-top: 10vh;
+}
+
+.regImageContainer {
+    margin-left: 5%;
+    margin-top: 6%;
+    text-align: center;
+}
+
+.regImageContainer input {
+    display: block;
+    margin: 0 auto; 
+    padding-top: 10%; 
+}

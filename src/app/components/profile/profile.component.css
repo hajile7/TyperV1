@@ -40,10 +40,10 @@ div {
   padding-top: .5%;
   padding-bottom: 1%;
   :hover{
-    color:aqua;
+    color: aqua;
   }
-  
 }
+  
 
 .recentTests {
   font-size: 1.15rem;
@@ -67,6 +67,13 @@ div {
   font-size: 1.1rem;
   cursor: default;
   text-decoration: underline;
+}
+
+.biSpaceChar {
+  font-weight: bold;
+  font-size: 1.1rem;
+  cursor: default;
+  text-decoration: none;
 }
 
 .currBigraphPopover {

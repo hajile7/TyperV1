@@ -28,6 +28,8 @@ export class ProfileComponent {
 
   userBigraphStats: UserBigraphStat[] = [];
 
+  tempBigraphArr: UserBigraphStat[] = [];
+
   currBigraph: string = "a";
 
   ngOnInit() {
@@ -47,10 +49,51 @@ export class ProfileComponent {
       new (window as any).bootstrap.Tooltip(tooltipTriggerEl);
     });
 
-    //initialize popovers
+    //initialize bigraph popover
     const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
-    const popoverList = Array.from(popoverTriggerList).map(popoverTriggerEl => new (window as any).bootstrap.Popover(popoverTriggerEl));
+    const popoverList = Array.from(popoverTriggerList).map(popoverTriggerEl => {
+      const content = `
+      <div id='popoverContent'>
+        <span class='popoverSpan'>A </span><span class='popoverSpan'>B </span>
+        <span class='popoverSpan'>C </span><span class='popoverSpan'>D </span>
+        <span class='popoverSpan'>E </span><span class='popoverSpan'>F </span>
+        <span class='popoverSpan'>G </span><span class='popoverSpan'>H </span>
+        <span class='popoverSpan'>I </span><span class='popoverSpan'>J </span>
+        <span class='popoverSpan'>K </span><span class='popoverSpan'>L </span>
+        <span class='popoverSpan'>M </span><span class='popoverSpan'>N </span>
+        <span class='popoverSpan'>O </span><span class='popoverSpan'>P </span>
+        <span class='popoverSpan'>Q </span><span class='popoverSpan'>R </span>
+        <span class='popoverSpan'>S </span><span class='popoverSpan'>T </span>
+        <span class='popoverSpan'>U </span><span class='popoverSpan'>V </span>
+        <span class='popoverSpan'>W </span><span class='popoverSpan'>X </span>
+        <span class='popoverSpan'>Y </span><span class='popoverSpan'>Z </span>
+      </div>
+    `;
 
+     const popoverInstance = new (window as any).bootstrap.Popover(popoverTriggerEl, {
+      html: true,
+      content: content
+    });
+
+    popoverTriggerEl.addEventListener('shown.bs.popover', () => {
+      const popoverElement = document.querySelector('.popover');
+
+      if (popoverElement) {
+        popoverElement.addEventListener('click', (event: Event) => {
+          const target = event.target as HTMLElement;
+          
+          if (target && target.classList.contains('popoverSpan')) {
+            const selectedLetter = target.innerText.trim().toLowerCase();
+            console.log('User clicked on letter:', selectedLetter);
+            this.currBigraph = selectedLetter;
+            this.getUserBigraphStats();
+          }
+        });
+      }
+    });
+
+    return popoverInstance;
+  });
   }
 
   getUser() {
@@ -71,7 +114,7 @@ export class ProfileComponent {
     this.userStatsService.getKeyStats(this.getUser().userId).subscribe((response) => {
       this.userKeyStats = response;
       this.userKeyStats.sort((a, b) => a.key.localeCompare(b.key));
-      //change 1 to Space and move it to end of arr for iterating in html (purely aesthetic)
+      //change 1 to _ and move it to end of arr for iterating in html (purely aesthetic)
       this.userKeyStats[0].key = "_";
       const el = this.userKeyStats.splice(0, 1)[0];
       this.userKeyStats.splice(this.userKeyStats.length, 0, el);
@@ -80,20 +123,61 @@ export class ProfileComponent {
 
   getUserBigraphStats() {
     this.userStatsService.getBigraphStats(this.getUser().userId, this.currBigraph).subscribe((response) => {
-      this.userBigraphStats = response;
-      this.userBigraphStats.sort((a,b) => a.bigraph.localeCompare(b.bigraph))
-      //change 1 to Space and move it to end of arr for iterating in html (purely aesthetic)
-      this.userBigraphStats[0].bigraph = "_" + this.currBigraph;
-      const el = this.userBigraphStats.splice(0, 1)[0];
-      this.userBigraphStats.splice(this.userBigraphStats.length, 0, el);
-      this.userBigraphStats[0].bigraph = this.currBigraph + "_";
-      console.log(this.userBigraphStats);
+      this.tempBigraphArr = response;
+      this.tempBigraphArr.sort((a,b) => a.bigraph.localeCompare(b.bigraph));
+      const str1 = this.currBigraph + "1";
+      const str2 = "1" + this.currBigraph;
+      const replacements = {
+      [str1]: this.currBigraph + "_", 
+      [str2]: "_" + this.currBigraph
+      };
+    
+      this.userBigraphStats = this.tempBigraphArr.map(bigraph => {
+        return {
+          ...bigraph,
+          bigraph: replacements[bigraph.bigraph] || bigraph.bigraph
+        };
+      });
+
+      this.userBigraphStats.sort((a, b) => {
+        const aStartsWithCurr = a.bigraph.startsWith(this.currBigraph);
+        const bStartsWithCurr = b.bigraph.startsWith(this.currBigraph);
+        
+        if (aStartsWithCurr && !bStartsWithCurr) return -1;
+        if (!aStartsWithCurr && bStartsWithCurr) return 1;
+  
+        return a.bigraph.localeCompare(b.bigraph);
+      });
+
     });
   }
 
+  convertToTime(seconds: number) {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
 
+    const pad = (num: number) => num.toString().padStart(2, '0');
 
+    return `${pad(hours)}:${pad(minutes)}:${pad(secs)}`;
+
+  }
+
+  formatDateString(str: string): string {
+
+    const date = new Date(str);
+    
+    const twoDigit = (num: number) => num.toString().padStart(2, '0');
+    
+    const month = twoDigit(date.getMonth() + 1);
+    const day = twoDigit(date.getDate());
+    const year = date.getFullYear().toString().slice(2);
+    
+    const hours = twoDigit(date.getHours());
+    const minutes = twoDigit(date.getMinutes());
+    
+    return `${month}/${day}/${year} ${hours}:${minutes}`;
   
+    }
+
 }
-
-
