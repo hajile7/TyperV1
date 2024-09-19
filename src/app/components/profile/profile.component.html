@@ -9,7 +9,7 @@
             <img style="border-radius: 100%; height: 40%; width: 40%;" [src]="imgUrl">
           }
         <h4 style="padding-top: 5%;">{{getUser().userName}}</h4>
-        <p><u>Member Since</u><br>{{formatDateString(getUser().joined)}}</p>
+        <p><u>Member Since</u><br>{{formatDateString(getUser().joined) + " UTC"}}</p>
         </div>
         <div class="col align-self-center" style="border-right: solid rgb(54, 53, 53) 3px; padding-right: 20%;">
           <div class="row align-self-center text-center userStats" style="margin-bottom: 15%;">
