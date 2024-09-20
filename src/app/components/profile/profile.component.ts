@@ -173,10 +173,7 @@ export class ProfileComponent {
     const day = twoDigit(date.getDate());
     const year = date.getFullYear().toString().slice(2);
     
-    const hours = twoDigit(date.getHours());
-    const minutes = twoDigit(date.getMinutes());
-    
-    return `${month}/${day}/${year} ${hours}:${minutes}`;
+    return `${month}/${day}/${year}`;
   
     }
 
