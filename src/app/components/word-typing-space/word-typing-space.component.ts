@@ -132,16 +132,16 @@ export class WordTypingSpaceComponent {
       this.currChar = this.testArr[0];
       this.convertCharstoWords();
     }); 
-    this.login();
+    // this.login();
   }
 
-  login() {
-    this.userService.login("dev", "dev").subscribe((response) => {
-      this.userService.activeUser = response;
-      this.userService.isLoggedIn = true;
-      this.router.navigate(["/Home"]);
-    })
-  }
+  // login() {
+  //   this.userService.login("dev", "dev").subscribe((response) => {
+  //     this.userService.activeUser = response;
+  //     this.userService.isLoggedIn = true;
+  //     this.router.navigate(["/Home"]);
+  //   })
+  // }
 
   ngAfterViewInit(): void {
     this.textInput?.nativeElement.focus();
